@@ -62,8 +62,8 @@ def allowedExtension(extension):
 
 def isUnique(filename):
     """Checks if a filename exists in the database."""
-    
-    items = g.db.execute('SELECT filename FROM `Pics` WHERE filename == (?)',
+
+    items = getDb().execute('SELECT filename FROM `Pics` WHERE filename == (?)',
                          [filename])
     if filename in items:
         return False
@@ -78,8 +78,9 @@ def connect():
  
 def addPic(filename):
     """Insert filename into database."""
-    g.db.execute('INSERT INTO `Pics` (filename) values (?)', [filename])
-    g.db.commit()
+    db = getDb()
+    db.execute('INSERT INTO `Pics` (filename) values (?)', [filename])
+    db.commit()
 
     
 def getDb():
@@ -98,19 +99,7 @@ def init():
             db.cursor().executescript(f.read())
         db.commit()
 
-
-@app.before_request
-def startRequest():
-    g.db = connect()
-
-
-@app.teardown_request
-def endRequest(exception):
-    db = getattr(g, 'db', None)
-    if db is not None:
-        db.close()
-
-
+        
 @app.errorhandler(404)
 def notFound(e):
     return render_template('404.html'), 404
