@@ -123,7 +123,7 @@ def uploadPic():
                 if isUnique(fn):
                     break
 
-            file.save(join(UPLOAD_DIR, fn + extension))
+            file.save(join(UPLOAD_DIR, fn + "." + extension))
 
             # Finally, add the URL to the db table.
             addPic(fn)
