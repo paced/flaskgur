@@ -170,7 +170,7 @@ if __name__ == '__main__':
         if argv[1].lower() == "start":
             app.run(debug=DEBUG, host='0.0.0.0')
         elif argv[1].lower() == "newkey":
-            print("Your secret API key is: " + addApiKey)
+            print("Your secret API key is: " + addApiKey())
         elif argv[1] == "restart":
             if raw_input("Are you ABSOLUTELY sure? All files will be " + \
                          "destroyed! Type 'yes' if you understand.") == "yes":
@@ -178,3 +178,4 @@ if __name__ == '__main__':
                 print("Restarted! Old files have not been purged.")
             else:
                 print("Nothing was changed.")
+                
