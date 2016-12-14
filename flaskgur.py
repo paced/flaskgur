@@ -33,7 +33,7 @@ app.config.from_object(__name__)
 def hash(size):
     """Insecurely generates a random string of n size."""
     chooseFrom = string.ascii_uppercase + string.ascii_lowercase + \
-                 string.digits
+        string.digits
     chars = [random.SystemRandom().choice(chooseFrom) for _ in range(size)]
 
     return str(''.join(chars))
@@ -41,24 +41,25 @@ def hash(size):
 
 def addApiKey():
     """Adds an API key to the api.keys file."""
-    
+
     with open(APIKEY_FILE, "a") as f:
         key = hash(64)
         f.write(key)
         f.write('\n')
-        
+
         return key
 
 
 def okApiKey(apikey):
     """Returns True if API key is accepted."""
-    
+
     open(APIKEY_FILE, 'a').close()
     with open(APIKEY_FILE, 'r') as f:
         if apikey in [i.rstrip() for i in f.readlines()]:
             return True
         else:
             return False
+
 
 def allowedExtension(extension):
     """Make sure extension is in the ALLOWD_EXTENSIONS set."""
@@ -70,15 +71,15 @@ def isUnique(filename):
 
     db = sqlite3.connect(DATABASE)
     items = db.execute('SELECT filename FROM `Pics` WHERE filename == (?)',
-                         [filename])
+                       [filename])
 
     if filename in items:
         db.close()
         return False
-    
+
     db.close()
     return True
-    
+
 
 def addPic(filename):
     """Insert filename into database."""
@@ -107,7 +108,7 @@ def forbidden(e):
     return render_template('403.html'), 403
 
 
-@app.route('/', methods=['GET','POST'])
+@app.route('/', methods=['GET', 'POST'])
 def uploadPic():
     if request.method == 'POST':
         file = request.files['file']
@@ -117,16 +118,16 @@ def uploadPic():
         if file and okApiKey(apikey) and allowedExtension(extension):
             while True:
                 fn = hash(random.randint(PATH_MINLENGTH, PATH_MAXLENGTH))
-            
+
                 # Check that fn doesn't already exist in the database.
                 if isUnique(fn):
                     break
 
             file.save(join(UPLOAD_DIR, fn + extension))
-            
+
             # Finally, add the URL to the db table.
             addPic(fn)
-            
+
             return SERVER + fn + extension
         else:  # Bad file extension or API key.
             abort(403)
@@ -144,7 +145,7 @@ def returnPic(filename):
 
 if __name__ == '__main__':
     # If run with no cmdline args, just start the server.
-    
+
     if not isfile(DATABASE):
         with open(DATABASE, 'a') as f:
             init()
@@ -157,10 +158,9 @@ if __name__ == '__main__':
         elif argv[1].lower() == "newkey":
             print("Your secret API key is: " + addApiKey())
         elif argv[1] == "restart":
-            if raw_input("Are you ABSOLUTELY sure? All files will be " + \
+            if raw_input("Are you ABSOLUTELY sure? All files will be " +
                          "destroyed! Type 'yes' if you understand. ") == "yes":
                 init()
                 print("Restarted! Old files have not been purged.")
             else:
                 print("Nothing was changed.")
-                
