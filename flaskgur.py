@@ -7,10 +7,9 @@ import os
 import time
 
 DEBUG              = True
-BASE_DIR           = '/var/www/changeme/flaskgur'
-UPLOAD_DIR         = BASE_DIR + 'pics'
-DATABASE           = BASE_DIR + 'flaskgur.db'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+UPLOAD_DIR         = 'pics'
+DATABASE           = 'flaskgur.db'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'webm', 'mp4'])
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -22,30 +21,15 @@ def check_extension(extension):
 def connect_db():
 	return sqlite3.connect(app.config['DATABASE'])
 
-# Return a list of the last 25 uploaded images	
-def get_last_pics():
-	cur = g.db.execute('select filename from pics order by id desc limit 25')
-	filenames = [row[0] for row in cur.fetchall()]
-	return filenames
-
 # Insert filename into database	
 def add_pic(filename):
 	g.db.execute('insert into pics (filename) values (?)', [filename])
 	g.db.commit()
 
-# Generate thumbnail image
-def gen_thumbnail(filename):
-	height = width = 200
-	original = Image.open(os.path.join(app.config['UPLOAD_DIR'], filename))
-	thumbnail = original.resize((width, height), Image.ANTIALIAS)
-	thumbnail.save(os.path.join(app.config['UPLOAD_DIR'], 'thumb_'+filename))
-	
-# Taken from flask example app
 @app.before_request
 def before_request():
     g.db = connect_db()
     
-# Taken from flask example app
 @app.teardown_request
 def teardown_request(exception):
     db = getattr(g, 'db', None)
@@ -77,12 +61,7 @@ def upload_pic():
 	else:
 		return render_template('upload.html', pics=get_last_pics())
 
-@app.route('/show')
-def show_pic():
-	filename = request.args.get('filename', '')
-	return render_template('upload.html', filename=filename)
-
-@app.route('/pics/<filename>')
+@app.route('/<filename>')
 def return_pic(filename):
 	return send_from_directory(app.config['UPLOAD_DIR'], secure_filename(filename))
 	
