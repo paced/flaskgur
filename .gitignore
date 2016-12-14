@@ -1,3 +1,5 @@
 flaskgur.db
 *.pyc
 api.keys
+env/
+bin/
