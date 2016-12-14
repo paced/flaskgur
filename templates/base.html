@@ -1,27 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-    <title>{% block title %} {% endblock %} - Flaskgur</title>
+<html>
+    <title>Imagehost</title>
 	<body>
-		<div id="header">
-			<a class="nav" href="/">Flaskgur</a>
-		</div>
-		
-		<div id="upload">
-			<h1>Upload Picture</h1>
-			<form action="/" method=post enctype=multipart/form-data>
-			<p>
-				<input type=file name=file><br />
-				<input type=submit value=Upload>
-			</p>
-		</div>
-		
-		<div id="content">
-			{% block content %}
-			{% endblock %}
-		</div>
-		
-		<div id="footer">Flaskgur &copy Copyright 2014 - <a href="http://www.chokepoint.net" target="_blank">Chokepoint</a>
-		</div>
+    <p>Hey there. Nothing really exciting to see here, just the root route for
+    an image host. Uploading is done via HTTP POST with an API key. Ask me and
+    maybe I'll send you one!</p>
 	</body>
 </html>

@@ -1,7 +1,9 @@
-{% extends "base.html" %}
-{% block title %}
-404
-{% endblock %}
-{% block content %}
-<img src="{{ url_for('static', filename='404.png') }}">
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>404</title>
+</head>
+<body>
+  <img src="{{ url_for('static', filename='404.png') }}">
+</body>
+</html>
