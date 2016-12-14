@@ -1,2 +1,3 @@
 flaskgur.db
+*.pyc
 api.keys
