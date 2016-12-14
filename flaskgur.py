@@ -16,8 +16,8 @@ UPLOAD_DIR = 'pics'
 APIKEY_FILE = 'api.keys'
 DATABASE = 'flaskgur.db'
 SCHEMA = 'schema.sql'
-ALLOWED_EXTENSIONS = set(["jpg", "png", "ico", "bmp", "txt", "md", "gifv",
-                          "mp4", "gif", "webm", "mp3", "xml", "json", "csv"])
+ALLOWED_EXTENSIONS = ["jpg", "png", "ico", "bmp", "txt", "md", "gifv",
+                      "mp4", "gif", "webm", "mp3", "xml", "json", "csv"]
 
 # Set the following to n where the number of unique images is sum from
 # s=PATH_MAXLENGTH to PATH_MINLENGTH of 61^s where PATH_MINLENGTH subtracted
@@ -112,9 +112,9 @@ def uploadPic():
     if request.method == 'POST':
         file = request.files['file']
         apikey = request.form['apikey'].rstrip()
-        extension = splitext(file.filename)[1].lower()
+        extension = str(splitext(file.filename)[1].lower())
 
-        if file and okApiKey(apikey): # and allowedExtension(extension):
+        if file and okApiKey(apikey) and allowedExtension(extension):
             while True:
                 fn = hash(random.randint(PATH_MINLENGTH, PATH_MAXLENGTH))
             
@@ -158,7 +158,7 @@ if __name__ == '__main__':
             print("Your secret API key is: " + addApiKey())
         elif argv[1] == "restart":
             if raw_input("Are you ABSOLUTELY sure? All files will be " + \
-                         "destroyed! Type 'yes' if you understand.") == "yes":
+                         "destroyed! Type 'yes' if you understand. ") == "yes":
                 init()
                 print("Restarted! Old files have not been purged.")
             else:
