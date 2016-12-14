@@ -63,8 +63,11 @@ def allowedExtension(extension):
 def isUnique(filename):
     """Checks if a filename exists in the database."""
 
+    if getDb():
+        return "Database exists."
     items = getDb().execute('SELECT filename FROM `Pics` WHERE filename == (?)',
                          [filename])
+    return items
     if filename in items:
         return False
     
