@@ -113,7 +113,7 @@ def uploadPic():
     if request.method == 'POST':
         file = request.files['file']
         apikey = request.form['apikey'].rstrip()
-        extension = str(splitext(file.filename)[1].lower())
+        extension = str(splitext(file.filename)[1].lower()[1:])
 
         if file and okApiKey(apikey) and allowedExtension(extension):
             while True:
