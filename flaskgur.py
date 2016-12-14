@@ -128,7 +128,7 @@ def uploadPic():
             # Finally, add the URL to the db table.
             addPic(fn)
 
-            return SERVER + fn + extension
+            return SERVER + fn + "." +  extension
         else:  # Bad file extension or API key.
             abort(403)
     else:
