@@ -33,7 +33,7 @@ def hash(size):
     """Insecurely generates a random string of n size."""
     chooseFrom = string.ascii_uppercase + string.ascii_lowercase + \
                  string.digits
-    chars = [random.SystemRandom().choice(chars) for _ in range(size)]
+    chars = [random.SystemRandom().choice(chooseFrom) for _ in range(size)]
 
     return ''.join(chars)
 
@@ -129,14 +129,13 @@ def uploadPic():
         
         extension = splitext(file.filename)[1].lower()
             
-        if file and allowedExtension(extension) and okApiKey(apikey):
+        if file and okApiKey(apikey): # and allowedExtension(extension):
             while True:
                 fn = hash(random.randint(PATH_MINLENGTH, PATH_MAXLENGTH))
-                
+            
                 # Check that fn doesn't already exist in the database.
                 if isUnique(fn):
                     break
-                print("File collision. Trying another hash...")
             
             file.save(join(app.config['UPLOAD_DIR'], filename))
             
