@@ -1,4 +1,5 @@
-drop table if exists pics;
-create table pics ( 
-  id integer primary key autoincrement,
-  filename text not null );
+DROP TABLE IF EXISTS `Pics`;
+CREATE TABLE IF NOT EXISTS `Pics` ( 
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  filename TEXT NOT NULL
+);
