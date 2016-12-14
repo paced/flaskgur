@@ -12,6 +12,7 @@ import string
 # Settings
 DEBUG = True
 UPLOAD_DIR = 'pics'
+APIKEY_FILE = 'api.keys'
 DATABASE = 'flaskgur.db'
 SCHEMA = 'schema.sql'
 ALLOWED_EXTENSIONS = set(["jpg", "png", "ico", "bmp", "txt", "md", "gifv",
