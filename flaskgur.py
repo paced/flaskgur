@@ -11,6 +11,7 @@ import string
 
 # Settings
 DEBUG = True
+SERVER = "https://i.paced.me/"  # Replace this. You must include the /.
 UPLOAD_DIR = 'pics'
 APIKEY_FILE = 'api.keys'
 DATABASE = 'flaskgur.db'
@@ -35,7 +36,7 @@ def hash(size):
                  string.digits
     chars = [random.SystemRandom().choice(chooseFrom) for _ in range(size)]
 
-    return ''.join(chars)
+    return str(''.join(chars))
 
 
 def addApiKey():
@@ -44,6 +45,7 @@ def addApiKey():
     with open(APIKEY_FILE, "a") as f:
         key = hash(64)
         f.write(key)
+        f.write('\n')
         
         return key
 
@@ -51,9 +53,12 @@ def addApiKey():
 def okApiKey(apikey):
     """Returns True if API key is accepted."""
     
-    with open(APIKEY_FILE, 'a') as f:
-        return True if apikey in f.readlines() else False
-
+    open(APIKEY_FILE, 'a').close()
+    with open(APIKEY_FILE, 'r') as f:
+        if apikey in [i.rstrip() for i in f.readlines()]:
+            return True
+        else:
+            return False
 
 def allowedExtension(extension):
     """Make sure extension is in the ALLOWD_EXTENSIONS set."""
@@ -63,14 +68,15 @@ def allowedExtension(extension):
 def isUnique(filename):
     """Checks if a filename exists in the database."""
 
-    if getDb():
-        return "Database exists."
-    items = getDb().execute('SELECT filename FROM `Pics` WHERE filename == (?)',
+    db = sqlite3.connect(DATABASE)
+    items = db.execute('SELECT filename FROM `Pics` WHERE filename == (?)',
                          [filename])
-    return items
+
     if filename in items:
+        db.close()
         return False
     
+    db.close()
     return True
     
 
@@ -84,11 +90,11 @@ def addPic(filename):
 
 def init():
     """Reinits database file."""
-      db = sqlite3.connect(DATABASE)
-      with app.open_resource(SCHEMA, mode='r') as f:
-          db.cursor().executescript(f.read())
-      db.commit()
-      db.close()
+    db = sqlite3.connect(DATABASE)
+    with app.open_resource(SCHEMA, mode='r') as f:
+        db.executescript(f.read())
+    db.commit()
+    db.close()
 
 
 @app.errorhandler(404)
@@ -105,10 +111,9 @@ def forbidden(e):
 def uploadPic():
     if request.method == 'POST':
         file = request.files['file']
-        apikey = request.form['apikey']
-        
+        apikey = request.form['apikey'].rstrip()
         extension = splitext(file.filename)[1].lower()
-            
+
         if file and okApiKey(apikey): # and allowedExtension(extension):
             while True:
                 fn = hash(random.randint(PATH_MINLENGTH, PATH_MAXLENGTH))
@@ -116,13 +121,13 @@ def uploadPic():
                 # Check that fn doesn't already exist in the database.
                 if isUnique(fn):
                     break
-            
-            file.save(join(app.config['UPLOAD_DIR'], filename))
+
+            file.save(join(UPLOAD_DIR, fn + extension))
             
             # Finally, add the URL to the db table.
-            addPic(filename)  
+            addPic(fn)
             
-            return redirect(url_for('show_pic', filename=fn))
+            return SERVER + fn + extension
         else:  # Bad file extension or API key.
             abort(403)
     else:
@@ -143,7 +148,7 @@ if __name__ == '__main__':
     if not isfile(DATABASE):
         with open(DATABASE, 'a') as f:
             init()
-    
+
     if len(argv) == 1:
         app.run(debug=DEBUG, host='0.0.0.0')
     elif len(argv) == 2:
