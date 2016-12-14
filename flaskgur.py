@@ -166,6 +166,9 @@ if __name__ == '__main__':
     
     if len(argv) == 1:
         app.run(debug=DEBUG, host='0.0.0.0')
+
+        with app.app_context():
+            print isUnique("test")
     elif len(argv) == 2:
         if argv[1].lower() == "start":
             app.run(debug=DEBUG, host='0.0.0.0')
