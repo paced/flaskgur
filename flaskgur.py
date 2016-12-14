@@ -1,5 +1,6 @@
-from flask import Flask, request, g, redirect, url_for, abort, render_template,
-                  send_from_directory
+#!/usr/bin/python
+from flask import Flask, request, g, redirect, url_for, abort, \
+                  render_template, send_from_directory
 from werkzeug import secure_filename
 from os.path import splitext, join, isfile
 from sys import argv
