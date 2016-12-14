@@ -73,36 +73,24 @@ def isUnique(filename):
     
     return True
     
-    
-def connect():
-    """Connect to an SQLite database file."""
-    return sqlite3.connect(app.config['DATABASE'])
 
- 
 def addPic(filename):
     """Insert filename into database."""
-    db = getDb()
+    db = sqlite3.connect(DATABASE)
     db.execute('INSERT INTO `Pics` (filename) values (?)', [filename])
     db.commit()
+    db.close()
 
-    
-def getDb():
-    """Get a database connection."""
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
 
-    
 def init():
     """Reinits database file."""
-    with app.app_context():
-        db = getDb()
-        with app.open_resource(SCHEMA, mode='r') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
+      db = sqlite3.connect(DATABASE)
+      with app.open_resource(SCHEMA, mode='r') as f:
+          db.cursor().executescript(f.read())
+      db.commit()
+      db.close()
 
-        
+
 @app.errorhandler(404)
 def notFound(e):
     return render_template('404.html'), 404
