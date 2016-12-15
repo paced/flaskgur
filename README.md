@@ -35,3 +35,8 @@ $ python flaskgur.py
 This will generate an apikey for you, and start the server on 0.0.0.0:5000. After this, you can send a file to your image host by POST request. The arguments are "file" and "apikey".
 
 After this, you may want to play around with the source file. This will allow you to make changes, most obviously to change the extensions allowed.
+
+## Todo
+
+- Simple admin monitoring of resource usage, all ID's used, how many ID's are left for each file type.
+- OSX has poor substitutes to ShareX. Image uploading is relatively easy, but not file uploads (mp3, .txt, .py, .c, etc), and video uploads. I think I'll create a FOSS script or program (cross-platform) that allows custom upload sources, error handling, screen region recording (both video and image), file upload in context menu, and progress meter.
