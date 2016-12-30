@@ -1,23 +1,23 @@
 # flaskgur
 
-Simple image hosting site written with Flask and Python. Forked from chokepoint's flask app, this is an even lighter version that hashes filenames differently and provides a simpler image upload feature. It is meant for use by apps like ShareX or using tools like `maim` and `slop` using POST requests.
+Simple image hosting site written with Flask and Python. Forked from chokepoint's flask app, this is an even lighter version that hashes filenames differently and provides a simpler image upload feature. It's meant for use by apps like ShareX or using tools like `maim` and `slop` using POST requests.
 
 ## Requirements
 
 The following are hard requirements:
 
-- Python 2.x
-- python-pip
-- Flask
+-   Python 2.x
+-   python-pip
+-   Flask
 
 Optionally, depending on your method of deployment:
 
-- virtualenv
-- uwsgi
+-   virtualenv
+-   uwsgi
 
 ## Installation
 
-You will of course need to deploy the server yourself, but to just run the server as a test:
+You will of course need to deploy the server yourself, but to run the server as a test:
 
 ```sh
 $ git clone https://github.com/paced/flaskgur
@@ -34,9 +34,9 @@ $ python flaskgur.py
 
 This will generate an apikey for you, and start the server on 0.0.0.0:5000. After this, you can send a file to your image host by POST request. The arguments are "file" and "apikey".
 
-After this, you may want to play around with the source file. This will allow you to make changes, most obviously to change the extensions allowed.
+After this, you may want to play around with the source file. This will allow you to make changes, most notably to change the extensions allowed.
 
 ## Todo
 
-- Simple admin monitoring of resource usage, all ID's used, how many ID's are left for each file type.
-- OSX has poor substitutes to ShareX. Image uploading is relatively easy, but not file uploads (mp3, .txt, .py, .c, etc), and video uploads. I think I'll create a FOSS script or program (cross-platform) that allows custom upload sources, error handling, screen region recording (both video and image), file upload in context menu, and progress meter.
+-   Simple admin monitoring of resource usage, all ID's used, the number of ID's left for each file type.
+-   OSX has poor substitutes to ShareX. Image uploading is easy, but not file uploads (mp3, .txt, .py, .c, etc), and video uploads. I think I'll create a FOSS script or program (cross-platform) that allows custom upload sources, error handling, screen region recording (both video and image), file upload in context menu, and progress meter.
