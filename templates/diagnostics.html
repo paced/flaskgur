@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>flaskgur diagnostics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <style>
+        .mid {
+            text-align: center;
+            padding-top: 18vh;
+            margin: 5vh auto;
+            width: 100%;
+            font-family: 'Raleway', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="mid">
+            <h1>diagnostics</h1>
+            <p>Public diagnostics of my imagehost:</p>
+        </div>
+        <div class="four columns offset-by-four">
+            <ol>
+                <li>Images hosted: {% hosted %}</li>
+                <ul>
+                    <li>Be sure to include 'apikey' and 'file'.</li>
+                </ul>
+                <li>The URL will be returned as response.</li>
+            </ol>
+        </div>
+        <div class="six columns offset-by-three">
+            <pre><code>$ curl --form "apikey=some_key; file=@file.path" i.paced.me</code></pre>
+        </div>
+        <div class="four columns offset-by-four mid" style="padding-top: 5vh">
+            <small>You can also clone the repository on <a href="https://github.com/paced/flaskgur">GitHub</a>.</small>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -158,9 +158,9 @@ def uploadPic():
                         print("We are adding a file to a densely " + \
                               "populated database. We will start to " + \
                               "accept collisions once we're full.")
+                        gettingFullWarning = True
                     elif databaseFull():
                         break
-                    gettingFullWarning = True
 
                 # Check that fn doesn't already exist in the database.
                 if isUnique(fn):
@@ -168,6 +168,7 @@ def uploadPic():
 
                 counter -= 1
 
+            # This will overwrite existing if required.
             file.save(join(UPLOAD_DIR, fn + extension))
 
             # Finally, add the URL to the db table.
@@ -182,10 +183,13 @@ def uploadPic():
     return render_template('base.html')
 
 
+@app.route('/diagnostics', methods=['GET', 'POST'])
+def diagnostics():
+    return render_template('diagnostics.html')
+
+
 @app.route('/<filename>')
 def returnPic(filename):
-    """Displays the image requested, 404 if not found."""
-
     return send_from_directory(app.config['UPLOAD_DIR'],
                                secure_filename(filename))
 
