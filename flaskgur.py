@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from flask import Flask, request, g, redirect, url_for, abort, \
                   render_template, send_from_directory
+from flask_htmlmin import HTMLMIN as htmlmin
 from werkzeug import secure_filename
 from os.path import splitext, join, isfile
 from sys import argv
@@ -32,6 +33,10 @@ TOO_MANY_COLLISIONS = 120
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.config['MINIFY_PAGE'] = True
+
+# Minify any HTML.
+htmlmin(app)
 
 
 def getMaxPossible():
@@ -40,13 +45,23 @@ def getMaxPossible():
     return sum([61**s for s in range(PATH_MINLENGTH, PATH_MAXLENGTH)])
 
 
+def getNoPhotos(ext):
+    """Check the number of total files with a certain extension are in the
+    database."""
+
+    db = sqlite3.connect(DATABASE)
+    picNo = db.execute('SELECT COUNT(filename) FROM `Pics` GROUP BY `id`')
+
+    return int(picNo[0])
+
+
 def databaseFull():
     """Check whether a database is full."""
 
     db = sqlite3.connect(DATABASE)
     picNo = db.execute('SELECT COUNT(filename) FROM `Pics` GROUP BY `id`')
 
-    return True if int(picNo[0]) >= getMaxPossible() else return False
+    return True if int(picNo[0]) >= getMaxPossible() else False
 
 
 def hash(size):
@@ -185,6 +200,11 @@ def uploadPic():
 
 @app.route('/diagnostics', methods=['GET', 'POST'])
 def diagnostics():
+    apikeyNum = sum(1 for line in open(APIKEY_FILE))
+    pngNum = getNoPhotos("png")
+    mp3Num = getNoPhotos("mp3")
+    txtNum = getNoPhotos("txt")
+
     return render_template('diagnostics.html')
 
 
@@ -202,7 +222,7 @@ if __name__ == '__main__':
         with open(DATABASE, 'a') as f:
             init()
 
-    """Operations:
+    """ Operations:
     - start: start flaskgur server.
     - newkey: generate new API key.
     - restart: destroys all file references in database.

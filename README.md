@@ -8,7 +8,8 @@ The following are hard requirements:
 
 -   Python 2.x
 -   python-pip
--   Flask
+-   Flask >= 0.12
+-   Flask-HTMLmin
 
 Optionally, depending on your method of deployment:
 
@@ -38,5 +39,7 @@ After this, you may want to play around with the source file. This will allow yo
 
 ## Todo
 
+-   Add favicon, meta information for main page.
+-   Remove any and all exif (metainfo) from photos after upload.
 -   Simple admin monitoring of resource usage, all ID's used, the number of ID's left for each file type.
 -   OSX has poor substitutes to ShareX. Image uploading is easy, but not file uploads (mp3, .txt, .py, .c, etc), and video uploads. I think I'll create a FOSS script or program (cross-platform) that allows custom upload sources, error handling, screen region recording (both video and image), file upload in context menu, and progress meter.
