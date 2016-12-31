@@ -13,7 +13,6 @@ import string
 
 # Settings
 DEBUG = True
-SERVER = "https://i.paced.me/"  # Replace this. You must include the slash.
 UPLOAD_DIR = 'pics'
 APIKEY_FILE = 'api.keys'
 DATABASE = 'flaskgur.db'
@@ -146,6 +145,9 @@ def forbidden(e):
 
 @app.errorhandler(404)
 def notFound(e):
+
+
+    print request.url_root
     return render_template('404.html'), 404
 
 
@@ -189,7 +191,7 @@ def uploadPic():
             # Finally, add the URL to the db table.
             addPic(fn)
 
-            return SERVER + fn + extension
+            return request.url_root + fn + extension
 
         # Bad file extension or API key.
         abort(403)
