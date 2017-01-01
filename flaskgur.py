@@ -145,9 +145,6 @@ def forbidden(e):
 
 @app.errorhandler(404)
 def notFound(e):
-
-
-    print request.url_root
     return render_template('404.html'), 404
 
 
