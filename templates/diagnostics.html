@@ -2,31 +2,49 @@
 <html>
 
 <head>
-    <title>flaskgur diagnostics</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
-    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <title>pipette diagnostics</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Diagnostics/usage page for a filehost running on the Python pipette module: a fast, open-source, lightweight, scalable private filehost developed by paced.">
+    <meta name="author" content="{{ me }}">
+
+    {{ compressor('allCSS', inline=False) }}
 </head>
 
 <body>
-    <div class="container">
-        <div class="mid">
+    <div class="container" style="padding-bottom: 10vh">
+        <div class="upper">
             <h1>diagnostics</h1>
-            <p>Public diagnostics of my imagehost:</p>
         </div>
-        <div class="four columns offset-by-four">
-            <ol>
-                <li>Images hosted: {% hosted %}</li>
-                <ul>
-                    <li>Be sure to include 'apikey' and 'file'.</li>
-                </ul>
-                <li>The URL will be returned as response.</li>
-            </ol>
-        </div>
-        <div class="six columns offset-by-three">
-            <pre><code>$ curl --form "apikey=some_key; file=@file.path" i.paced.me</code></pre>
-        </div>
-        <div class="four columns offset-by-four mid" style="padding-top: 5vh">
-            <small>You can also clone the repository on <a href="https://github.com/paced/flaskgur">GitHub</a>.</small>
+        <div class="row">
+            <div class="twelve columns center">
+                <h3>Usage</h3>
+                <table align="center">
+                    <thead>
+                        <tr>
+                            <td>Filetype</td>
+                            <td>Used</td>
+                            <td>Percent Used</td>
+                            <td>Total</td>
+                            <td>Remaining</td>
+                        </tr>
+                    </thead>
+                    {% for i in payload %}
+
+                    <tr>
+                        <td><b>{{ i["extension"] }}</b></td>
+                        <td>{{ i["used"] }}</td>
+                        <td>{{ i["percent"] }}</td>
+                        <td>{{ i["total"] }}</td>
+                        <td>{{ i["left"] }}</td>
+                    </tr>
+
+                    {% endfor %}
+                </table>
+                <a href="#" onclick="window.history.back();">Back</a>
+            </div>
         </div>
     </div>
 </body>

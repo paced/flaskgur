@@ -1,8 +1,11 @@
-#!/usr/bin/python
 from flask import Flask, request, g, redirect, url_for, abort, \
                   render_template, send_from_directory
 from flask_htmlmin import HTMLMIN as htmlmin
+from flask_compressor import Compressor, CSSBundle, FileAsset
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from werkzeug import secure_filename
+from settings import *
 from os.path import splitext, join, isfile
 from sys import argv
 
@@ -10,48 +13,48 @@ import random
 import sqlite3
 import os
 import string
-
-# Settings
-DEBUG = True
-UPLOAD_DIR = 'pics'
-APIKEY_FILE = 'api.keys'
-DATABASE = 'flaskgur.db'
-SCHEMA = 'schema.sql'
-ENTROPY = 64  # APIkey length.
-ALLOWED_EXTENSIONS = [".jpg", ".png", ".ico", ".bmp", ".txt", ".md", ".gifv",
-                      ".mp4", ".gif", ".webm", ".mp3", ".xml", ".json", ".csv"]
-
-# The number of unique images: the sum from s=PATH_MAXLENGTH to PATH_MINLENGTH
-# of 61**s where PATH_MINLENGTH subtracted from PATH_MAXLENGTH >= 0. The
-# default settings of 2 and 4 respectively allow 14,076,543 of each filetype.
-PATH_MINLENGTH = 2
-PATH_MAXLENGTH = 4
-
-# Total number of collisions before the system tries to increase maxlength.
-TOO_MANY_COLLISIONS = 120
+import jinja2
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['MINIFY_PAGE'] = True
+app.config['MINIFY_PAGE'] = not DEBUG
 
-# Minify any HTML.
+# Rate limit default settings
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    global_limits=["3600 per hour"]
+)
+
+# Minification
 htmlmin(app)
+compressor = Compressor()
+compressor.init_app(app)
 
+# Bundles to be compressed
+raleway = FileAsset(filename='css/raleway.css', processors=['cssmin'])
+skeleton = FileAsset(filename='css/skeleton.css', processors=['cssmin'])
+customcss = FileAsset(filename='css/custom.css', processors=['cssmin'])
+
+cssBundle = CSSBundle('allCSS', assets=[raleway, skeleton, customcss],
+                      processors=['cssmin'])
+compressor.register_bundle(cssBundle)
 
 def getMaxPossible():
     """Get the total possible number of combinations."""
 
-    return sum([61**s for s in range(PATH_MINLENGTH, PATH_MAXLENGTH)])
+    return sum([pow(61, s) for s in range(PATH_MINLENGTH, PATH_MAXLENGTH + 1)])
 
 
-def getNoPhotos(ext):
+def getNoTaken(ext):
     """Check the number of total files with a certain extension are in the
     database."""
 
     db = sqlite3.connect(DATABASE)
-    picNo = db.execute('SELECT COUNT(filename) FROM `Pics` GROUP BY `id`')
+    picNo = db.execute('SELECT COUNT(filename) FROM Pics WHERE filename ' +\
+                       'LIKE ?', [ext])
 
-    return int(picNo[0])
+    return int(picNo.fetchall()[0][0])
 
 
 def databaseFull():
@@ -96,7 +99,7 @@ def okApiKey(apikey):
 def allowedExtension(extension):
     """Make sure extension is in the ALLOWED_EXTENSIONS set."""
 
-    return extension in ALLOWED_EXTENSIONS
+    return "." + extension in ALLOWED_EXTENSIONS
 
 
 def isUnique(filename):
@@ -194,17 +197,37 @@ def uploadPic():
         abort(403)
 
     # If the user just tries to get to the site without a POST request:
-    return render_template('base.html')
+    return render_template('base.html', hostname=request.url_root, me=WHOAMI)
 
 
-@app.route('/diagnostics', methods=['GET', 'POST'])
+@app.route('/diagnostics')
 def diagnostics():
+    totalFiles = getMaxPossible()
     apikeyNum = sum(1 for line in open(APIKEY_FILE))
-    pngNum = getNoPhotos("png")
-    mp3Num = getNoPhotos("mp3")
-    txtNum = getNoPhotos("txt")
+    filesUsed = list()
 
-    return render_template('diagnostics.html')
+    absoluteTotal = 0
+    noExt = len(ALLOWED_EXTENSIONS)
+
+    for i in ALLOWED_EXTENSIONS:
+        taken = getNoTaken(i)
+        percent = '{0:.1f}%'.format(100.0*taken/totalFiles)
+
+        absoluteTotal += taken
+        filesUsed.append({"extension": i, "used": '{:,}'.format(taken),
+                          "percent": percent,
+                          "left": '{:,}'.format(totalFiles - taken),
+                          "total": '{:,}'.format(totalFiles)})
+
+    everything = noExt*totalFiles
+    percent = '{0:.1f}%'.format(100.0*absoluteTotal/everything)
+    filesUsed.append({"extension": "TOTAL",
+                     "used": '{:,}'.format(absoluteTotal),
+                     "percent": percent,
+                     "left": '{:,}'.format(everything - absoluteTotal),
+                     "total": '{:,}'.format(everything)})
+
+    return render_template('diagnostics.html', payload=filesUsed, me=WHOAMI)
 
 
 @app.route('/<filename>')
@@ -222,7 +245,7 @@ if __name__ == '__main__':
             init()
 
     """ Operations:
-    - start: start flaskgur server.
+    - start: start pipette server.
     - newkey: generate new API key.
     - restart: destroys all file references in database.
     """

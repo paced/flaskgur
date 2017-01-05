@@ -2,36 +2,24 @@
 <html>
 
 <head>
-    <title>flaskgur</title>
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/raleway.css') }}">
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/skeleton.css') }}">
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/custom.css') }}">
+    <title>pipette</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="This is a filehost running on the Python pipette module: a fast, open-source, lightweight, scalable private filehost developed by paced.">
+    <meta name="author" content="{{ me }}">
+
+    {{ compressor('allCSS', inline=False) }}
 </head>
 
 <body>
     <div class="container">
         <div class="mid">
-            <h1>flaskgur</h1>
-            <p>How to use:</p>
-        </div>
-        <div class="four columns offset-by-four">
-            <ol>
-                <li>Ask paced for an API key.</li>
-                <li>Send a POST request to i.paced.me</li>
-                <ul>
-                    <li>Be sure to include 'apikey' and 'file'.</li>
-                </ul>
-                <li>The URL will be returned as response.</li>
-            </ol>
-        </div>
-        <div class="six columns offset-by-three">
-            <pre><code>$ curl --form "apikey=some_key; file=@file.path" i.paced.me</code></pre>
-        </div>
-        <div class="four columns offset-by-four mid" style="padding-top: 5vh">
-            <small>You can also clone the repository on <a href="https://github.com/paced/flaskgur">GitHub</a>.</small>
+            <img src="https://d30y9cdsu7xlg0.cloudfront.net/png/95771-200.png">
+            <h1>pipette</h1>
+            <p>A private, <a href="https://github.com/paced/pipette">open source</a>, lightweight file host.</p>
+            <a href="/diagnostics">View diagnostics.</a>
         </div>
     </div>
 </body>
