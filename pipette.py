@@ -40,6 +40,7 @@ cssBundle = CSSBundle('allCSS', assets=[raleway, skeleton, customcss],
                       processors=['cssmin'])
 compressor.register_bundle(cssBundle)
 
+
 def getMaxPossible():
     """Get the total possible number of combinations."""
 
@@ -51,7 +52,7 @@ def getNoTaken(ext):
     database."""
 
     db = sqlite3.connect(DATABASE)
-    picNo = db.execute('SELECT COUNT(filename) FROM Pics WHERE filename ' +\
+    picNo = db.execute('SELECT COUNT(filename) FROM Pics WHERE filename ' +
                        'LIKE ?', [ext])
 
     return int(picNo.fetchall()[0][0])
@@ -70,7 +71,7 @@ def hash(size):
     """Insecurely generates a random string of n size."""
 
     chooseFrom = string.ascii_uppercase + string.ascii_lowercase + \
-                 string.digits
+        string.digits
     chars = [random.SystemRandom().choice(chooseFrom) for _ in range(size)]
 
     return str(''.join(chars))
@@ -172,8 +173,8 @@ def uploadPic():
                 # Check that we're not getting too full.
                 if counter >= TOO_MANY_COLLISIONS:
                     if not gettingFullWarning:
-                        print("We are adding a file to a densely " + \
-                              "populated database. We will start to " + \
+                        print("We are adding a file to a densely " +
+                              "populated database. We will start to " +
                               "accept collisions once we're full.")
                         gettingFullWarning = True
                     elif databaseFull():
@@ -222,10 +223,10 @@ def diagnostics():
     everything = noExt*totalFiles
     percent = '{0:.1f}%'.format(100.0*absoluteTotal/everything)
     filesUsed.append({"extension": "TOTAL",
-                     "used": '{:,}'.format(absoluteTotal),
-                     "percent": percent,
-                     "left": '{:,}'.format(everything - absoluteTotal),
-                     "total": '{:,}'.format(everything)})
+                      "used": '{:,}'.format(absoluteTotal),
+                      "percent": percent,
+                      "left": '{:,}'.format(everything - absoluteTotal),
+                      "total": '{:,}'.format(everything)})
 
     return render_template('diagnostics.html', payload=filesUsed, me=WHOAMI)
 
