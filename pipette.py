@@ -100,7 +100,9 @@ def okApiKey(apikey):
 def allowedExtension(extension):
     """Make sure extension is in the ALLOWED_EXTENSIONS set."""
 
-    return "." + extension in ALLOWED_EXTENSIONS
+    extension = "." + extension
+
+    return extension in ALLOWED_EXTENSIONS
 
 
 def isUnique(filename):
