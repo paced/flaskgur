@@ -87,7 +87,7 @@ def addApiKey():
         return key
 
 
-def okApiKey(apikey, verbose=False):
+def okApiKey(apikey, verbose=DEBUG):
     """Returns True if API key is accepted."""
 
     open(APIKEY_FILE, 'a').close()
@@ -95,7 +95,8 @@ def okApiKey(apikey, verbose=False):
         if verbose:
             print("\nYour API key is: '" + apikey + "'\n")
         for j in [str(i.rstrip()) for i in f.readlines()]:
-            print("Testing: " + j)
+            if verbose:
+                print("Testing: " + j)
             if str(j) == str(apikey):
                 if verbose:
                     print("Okay API key!")
