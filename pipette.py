@@ -175,7 +175,7 @@ def uploadPic():
         apikey = request.form['apikey'].rstrip()
         extension = str(splitext(file.filename)[1].lower())
 
-        if file and okApiKey(apikey) and allowedExtension(extension):
+        if file and okApiKey(apikey) and allowedExtension(extension) or DEBUG:
             gettingFullWarning = False
             counter = 0
             while True:
