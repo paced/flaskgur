@@ -93,13 +93,13 @@ def okApiKey(apikey, verbose=False):
     open(APIKEY_FILE, 'a').close()
     with open(APIKEY_FILE, 'r') as f:
         if verbose:
-            print("\nThese are acceptable API keys:\n")
-            print([i.rstrip() for i in f.readlines()])
             print("\nYour API key is: '" + apikey + "'\n")
-        if str(apikey) in [str(i.rstrip()) for i in f.readlines()]:
-            if verbose:
-                print("Okay API key!")
-            return True
+        for j in [str(i.rstrip()) for i in f.readlines()]:
+            print("Testing: " + j)
+            if str(j) == str(apikey):
+                if verbose:
+                    print("Okay API key!")
+                return True
         if verbose:
             print("API key not in list! Failed.")
         return False
