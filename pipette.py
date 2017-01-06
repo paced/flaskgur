@@ -96,7 +96,7 @@ def okApiKey(apikey, verbose=False):
             print("\nThese are acceptable API keys:\n")
             print([i.rstrip() for i in f.readlines()])
             print("\nYour API key is: '" + apikey + "'\n")
-        if apikey in [i.rstrip() for i in f.readlines()]:
+        if str(apikey) in [str(i.rstrip()) for i in f.readlines()]:
             if verbose:
                 print("Okay API key!")
             return True
