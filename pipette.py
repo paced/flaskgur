@@ -87,13 +87,21 @@ def addApiKey():
         return key
 
 
-def okApiKey(apikey):
+def okApiKey(apikey, verbose=False):
     """Returns True if API key is accepted."""
 
     open(APIKEY_FILE, 'a').close()
     with open(APIKEY_FILE, 'r') as f:
+        if verbose:
+            print("\nThese are acceptable API keys:\n")
+            print([i.rstrip() for i in f.readlines()])
+            print("\nYour API key is: " + apikey + "\n")
         if apikey in [i.rstrip() for i in f.readlines()]:
+            if verbose:
+                print("Okay API key!")
             return True
+        if verbose:
+            print("API key not in list! Failed.")
         return False
 
 
@@ -250,15 +258,21 @@ if __name__ == '__main__':
     """ Operations:
     - start: start pipette server.
     - newkey: generate new API key.
+    - checkkey: verbosely checks if an API key is good.
     - restart: destroys all file references in database.
     """
+
     if len(argv) == 1:
         app.run(debug=DEBUG, host='0.0.0.0')
-    elif len(argv) == 2:
+    elif len(argv) >= 2:
         if argv[1].lower() == "start":
             app.run(debug=DEBUG, host='0.0.0.0')
         elif argv[1].lower() == "newkey":
             print("Your secret API key is: " + addApiKey())
+        elif argv[1].lower() == "checkkey":
+            print("Checking that your key is valid...")
+            okApiKey(argv[2], True)
+
         elif argv[1] == "restart":
             if raw_input("Are you ABSOLUTELY sure? All files will be " +
                          "destroyed! Type 'yes' if you understand. ") == "yes":
@@ -266,3 +280,5 @@ if __name__ == '__main__':
                 print("Restarted! Old files have not been purged.")
             else:
                 print("Nothing was changed.")
+        else:
+            print("Your command was not recognised: " + str(argv[1:]))
