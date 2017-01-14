@@ -35,8 +35,6 @@ All configuration settings can be found in settings.py.
 
 Send a file by POST request. The arguments are "file" and "apikey". You return a URL to your uploaded file once your upload is finished and processed.
 
-## Extra
-
 -   **Note:** No uploaded file has an expiry date. This is intentional, since this is a private, self-hosted upload service.
 -   **Note:** Other people will not be able to upload without an API key. This is intentional, as it will appear as if you, the user, are uploading and sending other people's files.
 -   **Note:** File deletion is not possible. I don't believe this is necessary, but a pull request may change my mind.
