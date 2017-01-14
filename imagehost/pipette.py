@@ -41,6 +41,14 @@ cssBundle = CSSBundle('allCSS', assets=[raleway, skeleton, customcss],
 compressor.register_bundle(cssBundle)
 
 
+def dirExists(path):
+    """Ensures a directory exists. If not, creates it."""
+    try:
+        os.makedirs(path)
+    except OSError:
+        if not os.path.isdir(path):
+            raise
+
 def byteHumanise(num, suffix='B'):
     """Humanises bytes. Code thanks to SO user Sridhar Ratnakumar."""
 
@@ -55,8 +63,11 @@ def getDirSize(dir):
     """Gets the size of a directory (flat)."""
 
     try:
-        s = sum(os.path.getsize(f)
-                for f in os.listdir(dir) if os.path.isfile(f))
+        s = 0
+
+        for f in os.listdir(dir):
+            if os.path.isfile(dir + '/' + f):
+                s += os.path.getsize(dir + '/' + f)
     except:
         s = 0
 
@@ -74,10 +85,12 @@ def getNoTaken(ext):
     database."""
 
     db = sqlite3.connect(DATABASE)
-    picNo = db.execute('SELECT COUNT(filename) FROM Pics WHERE filename ' +
-                       'LIKE ?', [ext])
+    picNo = db.execute('SELECT COUNT(1) FROM Pics WHERE filename ' +
+                       'LIKE ?', ('%' + ext,))
 
-    return int(picNo.fetchall()[0][0])
+    picNoResp = int(picNo.fetchall()[0][0])
+    db.close()
+    return picNoResp
 
 
 def databaseFull():
@@ -86,7 +99,9 @@ def databaseFull():
     db = sqlite3.connect(DATABASE)
     picNo = db.execute('SELECT COUNT(filename) FROM `Pics` GROUP BY `id`')
 
-    return True if int(picNo[0]) >= getMaxPossible() else False
+    returnVal = True if int(picNo[0]) >= getMaxPossible() else False
+    db.close()
+    return returnVal
 
 
 def hash(size):
@@ -112,7 +127,7 @@ def addApiKey():
 def okApiKey(apikey, verbose=DEBUG):
     """Returns True if API key is accepted."""
 
-    open(APIKEY_FILE, 'a').close()
+    open(APIKEY_FILE, 'a').close()  # Touch file if it doesn't exist.
     with open(APIKEY_FILE, 'r') as f:
         if verbose:
             print("\nYour API key is: '" + apikey + "'\n")
@@ -134,18 +149,22 @@ def allowedExtension(extension):
     return extension in ALLOWED_EXTENSIONS
 
 
-def isUnique(filename):
+def isUnique(filename, verbose=DEBUG):
     """Checks if a filename exists in the database."""
 
     db = sqlite3.connect(DATABASE)
     items = db.execute('SELECT filename FROM `Pics` WHERE filename == (?)',
-                       [filename])
+                       (filename, ))
 
     if filename in items:
         db.close()
+        if verbose:
+            print(filename + " was taken!")
         return False
 
     db.close()
+    if verbose:
+        print(filename + " was not taken!")
     return True
 
 
@@ -153,10 +172,11 @@ def addPic(filename):
     """Insert filename into database."""
 
     db = sqlite3.connect(DATABASE)
-    db.execute('INSERT INTO `Pics` (filename) values (?)', [filename])
+    r = db.execute('INSERT INTO `Pics` (filename) VALUES (?)', (filename, ))
     db.commit()
     db.close()
 
+    return r
 
 def init():
     """(Re)initialises database file."""
@@ -192,12 +212,13 @@ def forbidden(e):
 def uploadPic():
     if request.method == 'POST':
         file = request.files['file']
-        apikey = request.form['apikey'].rstrip()
-        extension = str(splitext(file.filename)[1].lower())
+        apikey = str(request.form['apikey']).rstrip()
+        extension = str(splitext(file.filename)[1].lower()[1:])
 
         if file and okApiKey(apikey) and allowedExtension(extension) or DEBUG:
             gettingFullWarning = False
             counter = 0
+            extension = "." + extension
             while True:
                 fn = hash(random.randint(PATH_MINLENGTH, PATH_MAXLENGTH))
 
@@ -218,15 +239,15 @@ def uploadPic():
                 counter -= 1
 
             # This will overwrite existing if required.
+            dirExists(UPLOAD_DIR)
             file.save(join(UPLOAD_DIR, fn + extension))
 
             # Finally, add the URL to the db table.
-            addPic(fn)
+            addPic(fn + extension)
 
             return request.url_root + fn + extension
 
         # Bad file extension, no file, or bad API key.
-        return "allowedExtension: " + str(allowedExtension(extension)) + ", okApiKey: " + str(okApiKey(apikey)) + ", file: " + str(file)
         abort(403)
 
     # If the user just tries to get to the site without a POST request:
@@ -254,6 +275,9 @@ def diagnostics():
                           "left": '{:,}'.format(totalFilesPerExt - taken),
                           "total": '{:,}'.format(totalFilesPerExt)})
 
+    # Now, sort the files used so the type with the highest usage is first.
+    filesUsed = sorted(filesUsed, reverse=True, key=lambda k: int(k['used']))
+
     # Total calculations.
     percent = '{0:.1f}%'.format(100.0*totalUsed/totalPossibleFiles)
 
@@ -262,9 +286,6 @@ def diagnostics():
                       "percent": percent,
                       "left": '{:,}'.format(totalPossibleFiles - totalUsed),
                       "total": '{:,}'.format(totalPossibleFiles)})
-
-    # Now, sort the files used so the type with the highest usage is first.
-    filesUsed = sorted(filesUsed, key=lambda k: int(k['used']))
 
     # We also pass the size of the pics directory to diagnostics.
     dirSize = getDirSize(UPLOAD_DIR)
@@ -297,6 +318,7 @@ if __name__ == '__main__':
     - start: start pipette server.
     - newkey: generate new API key.
     - checkkey: verbosely checks if an API key is good.
+    - checkunique: check if a filename is unique.
     - restart: destroys all file references in database.
     """
 
@@ -310,7 +332,9 @@ if __name__ == '__main__':
         elif argv[1].lower() == "checkkey":
             print("Checking that your key is valid...")
             okApiKey(argv[2], True)
-
+        elif argv[1].lower() == "checkunique":
+            print("Checking that your key is unique...")
+            isUnique(argv[2], True)
         elif argv[1] == "restart":
             if raw_input("Are you ABSOLUTELY sure? All files will be " +
                          "destroyed! Type 'yes' if you understand. ") == "yes":
