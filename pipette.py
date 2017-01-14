@@ -304,7 +304,7 @@ if __name__ == '__main__':
     if len(argv) == 1:
         app.run(debug=DEBUG, host='0.0.0.0')
     elif len(argv) >= 2:
-        if argv[1].lower() == "start":
+        if argv[1].lower() in ["start", "run", "runserver"]:
             app.run(debug=DEBUG, host='0.0.0.0')
         elif argv[1].lower() == "newkey":
             print("Your secret API key is: " + addApiKey())
@@ -320,4 +320,4 @@ if __name__ == '__main__':
             else:
                 print("Nothing was changed.")
         else:
-            print("Your command was not recognised: " + str(argv[1:]))
+            print("Your command was not recognised: " + argv[1:].join(" "))
