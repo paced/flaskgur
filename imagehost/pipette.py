@@ -119,7 +119,7 @@ def okApiKey(apikey, verbose=DEBUG):
         for j in [str(i.rstrip()) for i in f.readlines()]:
             if verbose:
                 print("Testing: " + j)
-            if str(j) == str(apikey):
+            if j == apikey.rstrip():
                 if verbose:
                     print("Okay API key!")
                 return True
@@ -130,8 +130,6 @@ def okApiKey(apikey, verbose=DEBUG):
 
 def allowedExtension(extension):
     """Make sure extension is in the ALLOWED_EXTENSIONS set."""
-
-    extension = "." + extension
 
     return extension in ALLOWED_EXTENSIONS
 
