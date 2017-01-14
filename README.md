@@ -1,4 +1,6 @@
+<p align="center">
 ![Pipette!](imagehost/static/images/pipette.png)
+</p>
 
 # pipette
 
