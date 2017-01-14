@@ -37,14 +37,18 @@ Send a file by POST request. The arguments are "file" and "apikey". You return a
 
 ## Extra
 
-**Note:** No uploaded file has an expiry date. This is intentional, since this is a private, self-hosted upload service.
+-   **Note:** No uploaded file has an expiry date. This is intentional, since this is a private, self-hosted upload service.
 
-**Note:** Other people will not be able to upload without an API key. This is intentional, as it will appear as if you, the user, are uploading and sending other people's files.
+-   **Note:** Other people will not be able to upload without an API key. This is intentional, as it will appear as if you, the user, are uploading and sending other people's files.
 
-**Note:** File deletion is not possible. I don't believe this is necessary, but a pull request may change my mind.
+-   **Note:** File deletion is not possible. I don't believe this is necessary, but a pull request may change my mind.
 
-**Warning:** The diagnostics tab does not tell you how much space is remaining on your host's storage. Be careful not to exceed the limit of your host or the app, and your entire server, will break.
+-   **Warning:** The diagnostics tab does not tell you how much space is remaining on your host's storage. Be careful not to exceed the limit of your host or the app, and your entire server, will break.
 
 ## Credits and License
 
-Developed and designed by Thomas (Tianhao) Wang. This project is a completely reworked fork of chokepoint's flaskgur app. Favicon/logo design by Hannah Yen. This project is licensed under GPLv2.0.
+-   Developed and designed by Thomas (Tianhao) Wang.
+-   This project is a completely reworked fork of chokepoint's flaskgur app.
+-   Favicon/logo design by Hannah Yen.
+
+This project is licensed under GPLv2.0.
