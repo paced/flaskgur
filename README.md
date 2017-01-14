@@ -21,6 +21,7 @@ We recommend using virtualenv to not clutter your machine's Python installation,
 ```sh
 $ git clone https://github.com/paced/pipette && cd pipette
 $ pip install -r requirements.txt
+$ cd imagehost
 $ python pipette.py newkey
 $ python pipette.py runserver
 ```
