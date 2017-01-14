@@ -1,5 +1,5 @@
 <p align="center">
-![Pipette!](imagehost/static/images/pipette.png)
+<img src=imagehost/static/images/pipette.png alt="Pipette!" />
 </p>
 
 # pipette
