@@ -1,8 +1,12 @@
 # pipette
 
-Simple image hosting site written with Flask and Python. Forked from chokepoint's "flaskgur" app (see link below project header), this is an even lighter version that hashes filenames differently and only allows POST upload. It's meant for use by apps like ShareX or using tools like `maim` and `slop` using POST requests.
+Pipette is a self-hosted image and file host that is light, simple, and customisable. Anybody with a web host can use it
 
-As it is now an entirely different app to upstream, I have renamed it to "pipette."
+## Features
+
+-   Dead simple operation, accepting POST requests only for file upload.
+-   Uses the lightweight Flask Python framework.
+-   Shows diagnostics for the entire image database.
 
 ## Requirements
 
@@ -15,6 +19,7 @@ As it is now an entirely different app to upstream, I have renamed it to "pipett
 ```sh
 $ git clone https://github.com/paced/pipette
 $ cd pipette
+$ pip install -r requirements.txt
 $ python pipette.py newkey
 $ cat api.keys
 ```
@@ -29,6 +34,11 @@ $ python pipette.py
 
 Send a file by POST request. The arguments are "file" and "apikey".
 
+## Warnings
+
+The diagnostics tab does not tell you how much space is remaining on your host's storage. Be careful not to exceed the limit of your host or the app, and your entire server, will break.
+
 ## Todo
 
 -   Add favicon, change logo.
+-   Change into a pip module by allowing user to import, set own settings, and make APIkey creation a module function.

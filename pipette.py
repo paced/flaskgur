@@ -205,7 +205,7 @@ def uploadPic():
 
             return request.url_root + fn + extension
 
-        # Bad file extension or API key.
+        # Bad file extension, no file, or bad API key.
         abort(403)
 
     # If the user just tries to get to the site without a POST request:
