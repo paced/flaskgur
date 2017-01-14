@@ -3,3 +3,4 @@ pipette.db
 api.keys
 env/
 bin/
+pics/*

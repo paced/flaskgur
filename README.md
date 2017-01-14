@@ -1,3 +1,5 @@
+![Pipette!](imagehost/static/images/pipette.png)
+
 # pipette
 
 Pipette is a self-hosted image and file host that is light, simple, and customisable.
@@ -48,3 +50,8 @@ Send a file by POST request. The arguments are "file" and "apikey". You return a
 -   Favicon/logo design by Hannah Yen.
 
 This project is licensed under GPLv2.0.
+
+## Changelog
+
+-   15th January 2017
+    -   Project completed, first release 1.0.0 packaged.
