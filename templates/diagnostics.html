@@ -4,12 +4,7 @@
 <head>
     <title>pipette diagnostics</title>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Diagnostics/usage page for a filehost running on the Python pipette module: a fast, open-source, lightweight, scalable private filehost developed by paced.">
-    <meta name="author" content="{{ me }}">
-
+    {% include 'meta.html' %}
     {{ compressor('allCSS', inline=False) }}
 </head>
 
@@ -31,6 +26,7 @@
                             <td>Remaining</td>
                         </tr>
                     </thead>
+
                     {% for i in payload %}
 
                     <tr>
@@ -42,8 +38,12 @@
                     </tr>
 
                     {% endfor %}
+
                 </table>
-                <a href="#" onclick="window.history.back();">Back</a>
+
+                <b>You are using {{ dirSize }} of storage.</b>
+                <small><p class="foot">This does not tell you how much space is remaining on your disk storage.</p></small>
+                <a href="" onclick="window.history.back();">Back</a>
             </div>
         </div>
     </div>

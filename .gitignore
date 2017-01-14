@@ -1,4 +1,4 @@
-flaskgur.db
+pipette.db
 *.pyc
 api.keys
 env/

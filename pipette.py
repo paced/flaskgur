@@ -41,6 +41,28 @@ cssBundle = CSSBundle('allCSS', assets=[raleway, skeleton, customcss],
 compressor.register_bundle(cssBundle)
 
 
+def byteHumanise(num, suffix='B'):
+    """Humanises bytes. Code thanks to SO user Sridhar Ratnakumar."""
+
+    for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti']:
+        if abs(num) < 1024.0:
+            return "%3.1f %s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f %s%s" % (num, 'Pi', suffix)
+
+
+def getDirSize(dir):
+    """Gets the size of a directory (flat)."""
+
+    try:
+        s = sum(os.path.getsize(f)
+                for f in os.listdir(dir) if os.path.isfile(f))
+    except:
+        s = 0
+
+    return byteHumanise(s)
+
+
 def getMaxPossible():
     """Get the total possible number of combinations."""
 
@@ -209,37 +231,47 @@ def uploadPic():
         abort(403)
 
     # If the user just tries to get to the site without a POST request:
-    return render_template('base.html', hostname=request.url_root, me=WHOAMI)
+    return render_template('base.html', hostname=request.url_root, me=WHOAMI,
+                           desc=BASE_DESCRIPTION)
 
 
 @app.route('/diagnostics')
 def diagnostics():
-    totalFiles = getMaxPossible()
-    apikeyNum = sum(1 for line in open(APIKEY_FILE))
-    filesUsed = list()
+    totalFilesPerExt = getMaxPossible()
+    totalPossibleFiles = len(ALLOWED_EXTENSIONS)*totalFilesPerExt
 
-    absoluteTotal = 0
-    noExt = len(ALLOWED_EXTENSIONS)
+    filesUsed = list()  # List of dicts with data to be passed to template.
+
+    totalUsed = 0  # Cumulative sum of the total used files.
 
     for i in ALLOWED_EXTENSIONS:
         taken = getNoTaken(i)
-        percent = '{0:.1f}%'.format(100.0*taken/totalFiles)
+        percent = '{0:.1f}%'.format(100.0*taken/totalFilesPerExt)
 
-        absoluteTotal += taken
+        totalUsed += taken
+
         filesUsed.append({"extension": i, "used": '{:,}'.format(taken),
                           "percent": percent,
-                          "left": '{:,}'.format(totalFiles - taken),
-                          "total": '{:,}'.format(totalFiles)})
+                          "left": '{:,}'.format(totalFilesPerExt - taken),
+                          "total": '{:,}'.format(totalFilesPerExt)})
 
-    everything = noExt*totalFiles
-    percent = '{0:.1f}%'.format(100.0*absoluteTotal/everything)
+    # Total calculations.
+    percent = '{0:.1f}%'.format(100.0*totalUsed/totalPossibleFiles)
+
     filesUsed.append({"extension": "TOTAL",
-                      "used": '{:,}'.format(absoluteTotal),
+                      "used": '{:,}'.format(totalUsed),
                       "percent": percent,
-                      "left": '{:,}'.format(everything - absoluteTotal),
-                      "total": '{:,}'.format(everything)})
+                      "left": '{:,}'.format(totalPossibleFiles - totalUsed),
+                      "total": '{:,}'.format(totalPossibleFiles)})
 
-    return render_template('diagnostics.html', payload=filesUsed, me=WHOAMI)
+    # Now, sort the files used so the type with the highest usage is first.
+    filesUsed = sorted(filesUsed, key=lambda k: int(k['used']))
+
+    # We also pass the size of the pics directory to diagnostics.
+    dirSize = getDirSize(UPLOAD_DIR)
+
+    return render_template('diagnostics.html', payload=filesUsed, me=WHOAMI,
+                           desc=DIAG_DESCRIPTION, dirSize=dirSize)
 
 
 @app.route('/<filename>')
@@ -247,6 +279,12 @@ def returnPic(filename):
     return send_from_directory(app.config['UPLOAD_DIR'],
                                secure_filename(filename))
 
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicons/favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
     # If run with no cmdline args, just start the server.

@@ -4,21 +4,17 @@
 <head>
     <title>pipette</title>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="This is a filehost running on the Python pipette module: a fast, open-source, lightweight, scalable private filehost developed by paced.">
-    <meta name="author" content="{{ me }}">
-
+    {% include 'meta.html' %}
     {{ compressor('allCSS', inline=False) }}
 </head>
 
 <body>
     <div class="container">
         <div class="mid">
-            <img src="https://d30y9cdsu7xlg0.cloudfront.net/png/95771-200.png">
+            <img src="{{ url_for('static', filename='images/pipette.png') }}"
+                 alt="pipette image host">
             <h1>pipette</h1>
-            <p>A private, <a href="https://github.com/paced/pipette">open source</a>, lightweight file host.</p>
+            <p>A self-hosted, <a href="https://github.com/paced/pipette">open source</a>, lightweight file host.</p>
             <a href="/diagnostics">View diagnostics.</a>
         </div>
     </div>
