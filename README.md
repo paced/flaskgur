@@ -2,7 +2,7 @@
 
 # pipette
 
-Pipette is a self-hosted image and file host that is light, simple, and customisable.
+Pipette is a self-hosted image and file host that is light, simple, and customisable. See an example of the web frontend [here](https://i.paced.me).
 
 ## Features
 
