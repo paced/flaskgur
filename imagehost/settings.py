@@ -9,8 +9,7 @@ APIKEY_FILE = 'api.keys'
 DATABASE = 'pipette.db'
 SCHEMA = 'schema.sql'
 ENTROPY = 64  # APIkey length.
-ALLOWED_EXTENSIONS = ["jpg", "png", "txt", "mp4", "webm", "mp3", "gif", "bmp",
-                      "mp4"]
+ALLOWED_EXTENSIONS = ["jpg", "png", "txt", "mp4", "webm", "mp3", "gif", "bmp"]
 
 # It's recommended to keep these as is.
 PATH_MINLENGTH = 2
