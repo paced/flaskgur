@@ -1,19 +1,19 @@
-from flask import Flask, request, g, redirect, url_for, abort, \
-                  render_template, send_from_directory
-from flask_htmlmin import HTMLMIN as htmlmin
+"""pipette imagehost module main script file for utils and server ops."""
+import os
+import random
+import sqlite3
+import string
+from os.path import isfile, join, splitext
+from sys import argv
+
+from flask import Flask, abort, render_template, request, send_from_directory
 from flask_compressor import Compressor, CSSBundle, FileAsset
+from flask_htmlmin import HTMLMIN as htmlmin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug import secure_filename
-from settings import *
-from os.path import splitext, join, isfile
-from sys import argv
 
-import random
-import sqlite3
-import os
-import string
-import jinja2
+from settings import *
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -42,16 +42,16 @@ compressor.register_bundle(cssBundle)
 
 
 def dirExists(path):
-    """Ensures a directory exists. If not, creates it."""
+    """Ensure a directory exists. If not, creates it."""
     try:
         os.makedirs(path)
     except OSError:
         if not os.path.isdir(path):
             raise
 
-def byteHumanise(num, suffix='B'):
-    """Humanises bytes. Code thanks to SO user Sridhar Ratnakumar."""
 
+def byteHumanise(num, suffix='B'):
+    """Humanise bytes. Code thanks to SO user Sridhar Ratnakumar."""
     for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti']:
         if abs(num) < 1024.0:
             return "%3.1f %s%s" % (num, unit, suffix)
@@ -60,8 +60,7 @@ def byteHumanise(num, suffix='B'):
 
 
 def getDirSize(dir):
-    """Gets the size of a directory (flat)."""
-
+    """Get the size of a directory (flat)."""
     try:
         s = 0
 
@@ -76,14 +75,11 @@ def getDirSize(dir):
 
 def getMaxPossible():
     """Get the total possible number of combinations."""
-
     return sum([pow(61, s) for s in range(PATH_MINLENGTH, PATH_MAXLENGTH + 1)])
 
 
 def getNoTaken(ext):
-    """Check the number of total files with a certain extension are in the
-    database."""
-
+    """Check the number of files with an extension in the database."""
     db = sqlite3.connect(DATABASE)
     picNo = db.execute('SELECT COUNT(1) FROM Pics WHERE filename ' +
                        'LIKE ?', ('%' + ext,))
@@ -95,7 +91,6 @@ def getNoTaken(ext):
 
 def databaseFull():
     """Check whether a database is full."""
-
     db = sqlite3.connect(DATABASE)
     picNo = db.execute('SELECT COUNT(filename) FROM `Pics` GROUP BY `id`')
 
@@ -105,8 +100,7 @@ def databaseFull():
 
 
 def hash(size):
-    """Insecurely generates a random string of n size."""
-
+    """Insecurely generate a random string of n size."""
     chooseFrom = string.ascii_uppercase + string.ascii_lowercase + \
         string.digits
     chars = [random.SystemRandom().choice(chooseFrom) for _ in range(size)]
@@ -115,8 +109,7 @@ def hash(size):
 
 
 def addApiKey():
-    """Adds an API key to the api.keys file."""
-
+    """Add an API key to the api.keys file."""
     with open(APIKEY_FILE, "a") as f:
         key = hash(ENTROPY)
         f.write(key + '\n')
@@ -125,8 +118,7 @@ def addApiKey():
 
 
 def okApiKey(apikey, verbose=DEBUG):
-    """Returns True if API key is accepted."""
-
+    """Return True if API key is accepted."""
     open(APIKEY_FILE, 'a').close()  # Touch file if it doesn't exist.
     with open(APIKEY_FILE, 'r') as f:
         if verbose:
@@ -145,13 +137,11 @@ def okApiKey(apikey, verbose=DEBUG):
 
 def allowedExtension(extension):
     """Make sure extension is in the ALLOWED_EXTENSIONS set."""
-
     return extension in ALLOWED_EXTENSIONS
 
 
 def isUnique(filename, verbose=DEBUG):
-    """Checks if a filename exists in the database."""
-
+    """Check if a filename exists in the database."""
     db = sqlite3.connect(DATABASE)
     items = db.execute('SELECT filename FROM `Pics` WHERE filename == (?)',
                        (filename, ))
@@ -170,7 +160,6 @@ def isUnique(filename, verbose=DEBUG):
 
 def addPic(filename):
     """Insert filename into database."""
-
     db = sqlite3.connect(DATABASE)
     r = db.execute('INSERT INTO `Pics` (filename) VALUES (?)', (filename, ))
     db.commit()
@@ -178,9 +167,9 @@ def addPic(filename):
 
     return r
 
-def init():
-    """(Re)initialises database file."""
 
+def init():
+    """(Re)initialise database file."""
     db = sqlite3.connect(DATABASE)
     with app.open_resource(SCHEMA, mode='r') as f:
         db.executescript(f.read())
@@ -188,13 +177,13 @@ def init():
     db.close()
 
 
-@app.errorhandler(503)
-def forbidden(e):
+@app.errorhandler(502)
+def fiveOhTwo(e):
     return render_template('502.html'), 502
 
 
 @app.errorhandler(500)
-def forbidden(e):
+def internalServerError(e):
     return render_template('500.html'), 500
 
 
@@ -258,7 +247,7 @@ def uploadPic():
 @app.route('/diagnostics')
 def diagnostics():
     totalFilesPerExt = getMaxPossible()
-    totalPossibleFiles = len(ALLOWED_EXTENSIONS)*totalFilesPerExt
+    totalPossibleFiles = len(ALLOWED_EXTENSIONS) * totalFilesPerExt
 
     filesUsed = list()  # List of dicts with data to be passed to template.
 
@@ -266,7 +255,7 @@ def diagnostics():
 
     for i in ALLOWED_EXTENSIONS:
         taken = getNoTaken(i)
-        percent = '{0:.1f}%'.format(100.0*taken/totalFilesPerExt)
+        percent = '{0:.1f}%'.format(100.0 * taken / totalFilesPerExt)
 
         totalUsed += taken
 
@@ -279,7 +268,7 @@ def diagnostics():
     filesUsed = sorted(filesUsed, reverse=True, key=lambda k: int(k['used']))
 
     # Total calculations.
-    percent = '{0:.1f}%'.format(100.0*totalUsed/totalPossibleFiles)
+    percent = '{0:.1f}%'.format(100.0 * totalUsed / totalPossibleFiles)
 
     filesUsed.append({"extension": "TOTAL",
                       "used": '{:,}'.format(totalUsed),
@@ -305,6 +294,7 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicons/favicon.ico',
                                mimetype='image/vnd.microsoft.icon')
+
 
 if __name__ == '__main__':
     # If run with no cmdline args, just start the server.
