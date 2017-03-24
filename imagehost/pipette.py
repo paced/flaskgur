@@ -228,9 +228,9 @@ def uploadPic():
                            desc=BASE_DESCRIPTION)
 
 
-@app.route('/delete/<filename>', methods=["DELETE"])
+@app.route('/delete/<filename>', methods=["POST"])
 def delete(filename):
-    """If a correct DELETE request is sent with apikey, deletes a file."""
+    """If a correct POST request is sent with apikey, deletes a file."""
     apikey = str(request.form['apikey']).rstrip()
 
     # First check API key.

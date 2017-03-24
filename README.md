@@ -64,7 +64,7 @@ Use at your own risk. If you don't know how this works, I suggest either deletin
 
 Send a file by POST request with a file: "file" and field "apikey". The HTTP response is a URL, or a failure code. ShareX and curl are great tools to use this with.
 
-Delete a file by DELETE request to /delete/<file>. Include field "apikey" and the file will be immediately deleted without confirmation. Be careful!
+Delete a file by POST request to /delete/<file>. Include field "apikey" and the file will be immediately deleted without confirmation. Be careful!
 
 ## Credits and License
 
