@@ -246,14 +246,11 @@ def delete(filename):
         return 'Our database operation did not do anything. Failed.', 500
 
     # Now, depending on our settings file, we either delete the file or stash.
-    try:
-        if STASH:
-            os.rename(os.path.join(UPLOAD_DIR, 'pics/' + filename),
-                      os.path.join(UPLOAD_DIR, 'pics/stash/' + filename))
-        else:
-            os.remove(os.path.join(UPLOAD_DIR, 'pics/' + filename))
-    except OSError as e:
-        return 'File I/O error. Check folder structure. Exception: ' + str(e), 500
+    if STASH:
+        os.rename(os.path.join(UPLOAD_DIR, 'pics/' + filename),
+                  os.path.join(UPLOAD_DIR, 'pics/stash/' + filename))
+    else:
+        os.remove(os.path.join(UPLOAD_DIR, 'pics/' + filename))
 
     return "Success. No longer exists: " + equest.url_root + filename
 
