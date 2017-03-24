@@ -243,7 +243,8 @@ def delete(filename):
     db.close()
 
     if not r:
-        return 'Our database operation did not do anything. Failed.', 500
+        return 'Our database operation did not do anything. ' + \
+            'Does the file exist?.', 403
 
     # Now, depending on our settings file, we either delete the file or stash.
     if STASH:
@@ -252,7 +253,7 @@ def delete(filename):
     else:
         os.remove(os.path.join(UPLOAD_DIR, filename))
 
-    return "Success. No longer exists: " + equest.url_root + filename
+    return "Success. No longer exists: " + request.url_root + filename
 
 
 @app.route('/diagnostics')
