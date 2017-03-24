@@ -4,3 +4,4 @@ Flask-Compressor>=0.2.0
 Flask-Limiter>=0.9.3
 uwsgi>=2.0.14
 cssmin>=0.2.0
+pyyaml>=3.12

@@ -6,14 +6,34 @@ import string
 from os.path import isfile, join, splitext
 from sys import argv
 
+import yaml
 from flask import Flask, abort, render_template, request, send_from_directory
 from flask_compressor import Compressor, CSSBundle, FileAsset
 from flask_htmlmin import HTMLMIN as htmlmin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from utils import *
 from werkzeug import secure_filename
 
-from settings import *
+# These settings are not necessary to not hardcode:
+UPLOAD_DIR = 'pics'
+DATABASE = 'pipette.db'
+SCHEMA = 'schema.sql'
+TOO_MANY_COLLISIONS = 50
+
+# Get information from our YAML file:
+with open('settings.yaml') as f:
+    settings = yaml.load(f.read())
+
+    DEBUG = dictSet(settings, 'DEBUG')
+    STASH = dictSet(settings, 'STASH')
+    WHOAMI = dictSet(settings, 'WHOAMI')
+    BASE_DESCRIPTION = dictSet(settings, 'BASE_DESCRIPTION')
+    DIAG_DESCRIPTION = dictSet(settings, 'DIAG_DESCRIPTION')
+    ALLOWED_EXTENSIONS = set(dictSet(settings, 'ALLOWED_EXTENSIONS'))
+    PATH_MINLENGTH = dictSet(settings, 'PATH_MINLENGTH')
+    PATH_MAXLENGTH = dictSet(settings, 'PATH_MAXLENGTH')
+
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -39,38 +59,6 @@ customcss = FileAsset(filename='css/custom.css', processors=['cssmin'])
 cssBundle = CSSBundle('allCSS', assets=[raleway, skeleton, customcss],
                       processors=['cssmin'])
 compressor.register_bundle(cssBundle)
-
-
-def dirExists(path):
-    """Ensure a directory exists. If not, creates it."""
-    try:
-        os.makedirs(path)
-    except OSError:
-        if not os.path.isdir(path):
-            raise
-
-
-def byteHumanise(num, suffix='B'):
-    """Humanise bytes. Code thanks to SO user Sridhar Ratnakumar."""
-    for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti']:
-        if abs(num) < 1024.0:
-            return "%3.1f %s%s" % (num, unit, suffix)
-        num /= 1024.0
-    return "%.1f %s%s" % (num, 'Pi', suffix)
-
-
-def getDirSize(dir):
-    """Get the size of a directory (flat)."""
-    try:
-        s = 0
-
-        for f in os.listdir(dir):
-            if os.path.isfile(dir + '/' + f):
-                s += os.path.getsize(dir + '/' + f)
-    except:
-        s = 0
-
-    return byteHumanise(s)
 
 
 def getMaxPossible():
@@ -108,19 +96,10 @@ def hash(size):
     return str(''.join(chars))
 
 
-def addApiKey():
-    """Add an API key to the api.keys file."""
-    with open(APIKEY_FILE, "a") as f:
-        key = hash(ENTROPY)
-        f.write(key + '\n')
-
-        return key
-
-
 def okApiKey(apikey, verbose=DEBUG):
     """Return True if API key is accepted."""
-    open(APIKEY_FILE, 'a').close()  # Touch file if it doesn't exist.
-    with open(APIKEY_FILE, 'r') as f:
+    open('api.keys', 'a').close()  # Touch file if it doesn't exist.
+    with open('api.keys', 'r') as f:
         if verbose:
             print("\nYour API key is: '" + apikey + "'\n")
         for j in [str(i.rstrip()) for i in f.readlines()]:
@@ -143,7 +122,7 @@ def allowedExtension(extension):
 def isUnique(filename, verbose=DEBUG):
     """Check if a filename exists in the database."""
     db = sqlite3.connect(DATABASE)
-    items = db.execute('SELECT filename FROM `Pics` WHERE filename == (?)',
+    items = db.execute('SELECT filename FROM `Pics` WHERE filename LIKE (?)',
                        (filename, ))
 
     if filename in items:
@@ -179,26 +158,31 @@ def init():
 
 @app.errorhandler(502)
 def fiveOhTwo(e):
+    """View for 502 page."""
     return render_template('502.html'), 502
 
 
 @app.errorhandler(500)
 def internalServerError(e):
+    """View for 502 page."""
     return render_template('500.html'), 500
 
 
 @app.errorhandler(404)
 def notFound(e):
+    """View for 404 page."""
     return render_template('404.html'), 404
 
 
 @app.errorhandler(403)
 def forbidden(e):
+    """View for 403 page."""
     return render_template('403.html'), 403
 
 
 @app.route('/', methods=['GET', 'POST'])
 def uploadPic():
+    """Root image host."""
     if request.method == 'POST':
         file = request.files['file']
         apikey = str(request.form['apikey']).rstrip()
@@ -244,8 +228,37 @@ def uploadPic():
                            desc=BASE_DESCRIPTION)
 
 
+@app.route('/delete/<filename>', methods=["DELETE"])
+def delete(filename):
+    """If a correct DELETE request is sent with apikey, deletes a file."""
+    apikey = str(request.form['apikey']).rstrip()
+
+    # First check API key.
+    if not okApiKey(apikey):
+        return "Forbidden. Bad API key.", 403
+
+    db = sqlite3.connect(DATABASE)
+    r = db.execute('DELETE FROM `Pics` WHERE filename LIKE (?)', (filename, ))
+    db.commit()
+    db.close()
+
+    if not r:
+        return 'Our database operation did not do anything. Failed.', 500
+
+    # Now, depending on our settings file, we either delete the file or stash.
+    try:
+        if STASH:
+            os.rename(os.path.join(UPLOAD_DIR, 'pics/' + filename),
+                      os.path.join(UPLOAD_DIR, 'pics/stash/' + filename))
+        else:
+            os.remove(os.path.join(UPLOAD_DIR, 'pics/' + filename))
+    except OSError:
+        return 'File I/O error. Check folder structure.', 500
+
+
 @app.route('/diagnostics')
 def diagnostics():
+    """Diagnostic view."""
     totalFilesPerExt = getMaxPossible()
     totalPossibleFiles = len(ALLOWED_EXTENSIONS) * totalFilesPerExt
 
@@ -285,12 +298,14 @@ def diagnostics():
 
 @app.route('/<filename>')
 def returnPic(filename):
+    """Fetch the image from the URL."""
     return send_from_directory(app.config['UPLOAD_DIR'],
                                secure_filename(filename))
 
 
 @app.route('/favicon.ico')
 def favicon():
+    """Legacy favicon."""
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicons/favicon.ico',
                                mimetype='image/vnd.microsoft.icon')

@@ -1,3 +1,4 @@
+"""WSGI module."""
 from pipette import app as application
 
 if __name__ == "__main__":

@@ -1,14 +1,16 @@
-debug: No
-whoami: paced
-desc: >
-  This is a filehost running on the Python pipette module: a 
-  fast, open-source, lightweight, scalable private filehost 
-  developed by paced.
-diag_desc: >
-  Diagnostics/usage page for a filehost running on the Python 
-  pipette module: a fast, open-source, lightweight, scalable 
-  private filehost developed by paced.
-extensions:
+# Pipette Settings
+
+WHOAMI: Anonymous
+
+DEBUG: no  # Keep this as no as debug mode is a security risk.
+STASH: yes  # Keep an archive of files after deleting them, or no?
+
+BASE_DESCRIPTION: >
+  This is a filehost running on the Python pipette module: a fast, open-source, lightweight, scalable private filehost developed by paced.
+DIAG_DESCRIPTION: >
+  Diagnostics/usage page for a filehost running on the Python pipette module: a fast, open-source, lightweight, scalable private filehost developed by paced.'
+
+ALLOWED_EXTENSIONS:
   - "jpg"
   - "png"
   - "txt"
@@ -18,13 +20,6 @@ extensions:
   - "gif"
   - "bmp"
 
-# It's recommended to keep these as-is.
-entropy: 64
-path_minlength: 2
-path_maxlength: 4
-too_many_collisions: 100
-
-upload_dir: pics
-apikey_file: api.keys
-db_file: pipette.db
-schema_file: schema.sql
+# It's recommended to keep these as is.
+PATH_MINLENGTH: 2
+PATH_MAXLENGTH: 4
