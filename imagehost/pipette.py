@@ -247,10 +247,10 @@ def delete(filename):
 
     # Now, depending on our settings file, we either delete the file or stash.
     if STASH:
-        os.rename(os.path.join(UPLOAD_DIR, 'pics/' + filename),
-                  os.path.join(UPLOAD_DIR, 'pics/stash/' + filename))
+        os.rename(os.path.join(UPLOAD_DIR, filename),
+                  os.path.join(UPLOAD_DIR, 'stash/' + filename))
     else:
-        os.remove(os.path.join(UPLOAD_DIR, 'pics/' + filename))
+        os.remove(os.path.join(UPLOAD_DIR, filename))
 
     return "Success. No longer exists: " + equest.url_root + filename
 
