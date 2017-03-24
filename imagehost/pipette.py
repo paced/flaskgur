@@ -237,14 +237,13 @@ def delete(filename):
     if not okApiKey(apikey):
         return "Forbidden. Bad API key.", 403
 
-    db = sqlite3.connect(DATABASE)
-    r = db.execute('DELETE FROM `Pics` WHERE filename LIKE (?)', (filename, ))
-    db.commit()
-    db.close()
+    # Don't delete from the database. Just let it 404. Imagine sending
+    # something and the recipient, down the line, stumbling upon it only for
+    # it to be something completely different.
 
-    if not r:
-        return 'Our database operation did not do anything. ' + \
-            'Does the file exist?.', 403
+    # Test if the file exists.
+    if not os.path.exists(os.path.join(UPLOAD_DIR, filename)):
+        return "Nothing to do. File not found.", 404
 
     # Now, depending on our settings file, we either delete the file or stash.
     if STASH:
