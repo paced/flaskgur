@@ -252,8 +252,8 @@ def delete(filename):
                       os.path.join(UPLOAD_DIR, 'pics/stash/' + filename))
         else:
             os.remove(os.path.join(UPLOAD_DIR, 'pics/' + filename))
-    except OSError:
-        return 'File I/O error. Check folder structure.', 500
+    except OSError as e:
+        return 'File I/O error. Check folder structure. Exception: ' + e, 500
 
     return "Success. No longer exists: " + equest.url_root + filename
 
