@@ -253,8 +253,7 @@ def delete(filename):
         else:
             os.remove(os.path.join(UPLOAD_DIR, 'pics/' + filename))
     except OSError as e:
-        return 'File I/O error. Check folder structure. Exception: ' + str(e),
-            500
+        return 'File I/O error. Check folder structure. Exception: ' + str(e), 500
 
     return "Success. No longer exists: " + equest.url_root + filename
 
