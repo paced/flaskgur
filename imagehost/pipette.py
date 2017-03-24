@@ -255,6 +255,8 @@ def delete(filename):
     except OSError:
         return 'File I/O error. Check folder structure.', 500
 
+    return "Success. No longer exists: " + equest.url_root + filename
+
 
 @app.route('/diagnostics')
 def diagnostics():
