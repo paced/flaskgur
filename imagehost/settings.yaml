@@ -6,9 +6,12 @@ DEBUG: no  # Keep this as no as debug mode is a security risk.
 STASH: yes  # Keep an archive of files after deleting them, or no?
 
 BASE_DESCRIPTION: >
-  This is a filehost running on the Python pipette module: a fast, open-source, lightweight, scalable private filehost developed by paced.
+  "This is a filehost running on the Python pipette module: a fast,
+  open-source, lightweight, scalable private filehost developed by paced."
 DIAG_DESCRIPTION: >
-  Diagnostics/usage page for a filehost running on the Python pipette module: a fast, open-source, lightweight, scalable private filehost developed by paced.'
+  "Diagnostics/usage page for a filehost running on the Python pipette module:
+  a fast, open-source, lightweight, scalable private filehost developed by
+  paced."
 
 ALLOWED_EXTENSIONS:
   - "jpg"

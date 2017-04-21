@@ -6,14 +6,15 @@ import string
 from os.path import isfile, join, splitext
 from sys import argv
 
-import yaml
 from flask import Flask, abort, render_template, request, send_from_directory
+from werkzeug import secure_filename
+
+import yaml
 from flask_compressor import Compressor, CSSBundle, FileAsset
 from flask_htmlmin import HTMLMIN as htmlmin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from utils import *
-from werkzeug import secure_filename
 
 # These settings are not necessary to not hardcode:
 UPLOAD_DIR = 'pics'
