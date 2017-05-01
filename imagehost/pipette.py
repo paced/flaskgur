@@ -253,7 +253,7 @@ def delete(filename):
     else:
         os.remove(os.path.join(UPLOAD_DIR, filename))
 
-    return "Success. No longer exists: " + request.url_root + filename
+    return "Success. No longer exists: " + request.url_root + filename, 202
 
 
 @app.route('/diagnostics')
