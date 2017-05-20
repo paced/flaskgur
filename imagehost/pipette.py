@@ -197,7 +197,8 @@ def uploadPic():
             # Check secure settings for URL length.
             if 'secure' in request.form:
                 # Don't rely on short circuiting.
-                if request.form['insecure']:
+                if str(request.form['insecure']).lower() in ('1', 'true',
+                                                             'yes'):
                     minlength = INSEC_MINLENGTH
                     maxlength = INSEC_MAXLENGTH
                 else:
