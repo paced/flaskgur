@@ -103,6 +103,7 @@ Changelog
 
 -	21st May 2017
 	-	After much debate, I figured to increase the default URL digits for files in order to mitigate directory traversal.
+	-	But this is only for default. You can also make a screenshot sending an additional argument "insecure: 1" which will give a classic short URL.
 -	1st May 2017
 	-	Rudimentary logging solution created.
 -	24th March 2017

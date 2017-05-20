@@ -23,5 +23,10 @@ ALLOWED_EXTENSIONS:
   - "gif"
   - "bmp"
 
-PATH_MINLENGTH: 9
-PATH_MAXLENGTH: 14
+# Secure
+PATH_MINLENGTH: 10
+PATH_MAXLENGTH: 12
+
+# Insecure (used for common sharing)
+INSEC_MINLENGTH: 2
+INSEC_MAXLENGTH: 4

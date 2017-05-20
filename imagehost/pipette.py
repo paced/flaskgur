@@ -193,8 +193,22 @@ def uploadPic():
             gettingFullWarning = False
             counter = 0
             extension = "." + extension
+
+            # Check secure settings for URL length.
+            if 'secure' in request.form:
+                # Don't rely on short circuiting.
+                if request.form['insecure']:
+                    minlength = INSEC_MINLENGTH
+                    maxlength = INSEC_MAXLENGTH
+                else:
+                    minlength = PATH_MINLENGTH
+                    maxlength = PATH_MAXLENGTH
+            else:
+                minlength = PATH_MINLENGTH
+                maxlength = PATH_MAXLENGTH
+
             while True:
-                fn = hash(random.randint(PATH_MINLENGTH, PATH_MAXLENGTH))
+                fn = hash(random.randint(minlength, maxlength))
 
                 # Check that we're not getting too full.
                 if counter >= TOO_MANY_COLLISIONS:
@@ -204,7 +218,7 @@ def uploadPic():
                               "accept collisions once we're full.")
                         gettingFullWarning = True
                     elif databaseFull():
-                        break
+                        return 500
 
                 # Check that fn doesn't already exist in the database.
                 if isUnique(fn):
