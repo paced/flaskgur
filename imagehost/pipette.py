@@ -34,6 +34,8 @@ with open('settings.yaml') as f:
     ALLOWED_EXTENSIONS = set(dictSet(settings, 'ALLOWED_EXTENSIONS'))
     PATH_MINLENGTH = dictSet(settings, 'PATH_MINLENGTH')
     PATH_MAXLENGTH = dictSet(settings, 'PATH_MAXLENGTH')
+    INSEC_MINLENGTH = dictSet(settings, 'INSEC_MINLENGTH')
+    INSEC_MAXLENGTH = dictSet(settings, 'INSEC_MAXLENGTH')
 
 
 app = Flask(__name__)
@@ -195,7 +197,7 @@ def uploadPic():
             extension = "." + extension
 
             # Check secure settings for URL length.
-            if 'secure' in request.form:
+            if 'insecure' in request.form:
                 # Don't rely on short circuiting.
                 if str(request.form['insecure']).lower() in ('1', 'true',
                                                              'yes'):
