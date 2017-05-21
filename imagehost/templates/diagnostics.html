@@ -2,45 +2,57 @@
 <html>
 
 <head>
-    <title>pipette diagnostics</title>
+  <title>pipette diagnostics</title>
 
-    {% include 'meta.html' %}
-    {{ compressor('allCSS', inline=False) }}
+  {% include 'meta.html' %} {{ compressor('allCSS', inline=False) }}
 </head>
 
 <body>
-    <div class="container" style="padding-bottom: 10vh">
-        <div class="upper">
-            <h1>diagnostics</h1>
-        </div>
-        <div class="row">
-            <div class="twelve columns center">
-                <h3>Usage</h3>
-                <table align="center">
-                    <thead>
-                        <tr>
-                            <td>Filetype</td>
-                            <td>Used</td>
-                        </tr>
-                    </thead>
-
-                    {% for i in payload %}
-
-                    <tr>
-                        <td><b>{{ i["extension"] }}</b></td>
-                        <td>{{ i["used"] }}</td>
-                    </tr>
-
-                    {% endfor %}
-
-                </table>
-
-                <b>You are using {{ dirSize }} of storage.</b>
-                <small><p class="foot">Please watch for remaining space!</p></small>
-                <a href="" onclick="window.history.back();">Back</a>
-            </div>
-        </div>
+  <div class="container" style="padding-bottom: 10vh">
+    <div class="upper">
+      <h1>diagnostics</h1>
     </div>
+    <div class="row">
+      <div class="twelve columns center">
+        <h3>Usage</h3>
+        <table align="center">
+          <thead>
+            <tr>
+              <td>Filetype</td>
+              <td>Used</td>
+            </tr>
+          </thead>
+
+          {% for i in payload %}
+
+          <tr>
+            <td><b>{{ i["extension"] }}</b></td>
+            <td>{{ i["used"] }}</td>
+          </tr>
+
+          {% endfor %}
+
+        </table>
+
+        <b>You are using {{ dirSize }} of storage.</b>
+        <small><p class="foot">Please watch for remaining space!</p></small>
+        <a href="" class="goBack">Back</a>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+    $('.goBack').on('click', function(evt) {
+      var fallbackUrl = "/";
+      var prevPage = window.location.href;
+      window.history.go(-1);
+      setTimeout(function() {
+        if (window.location.href == prevPage) {
+          window.location.href = fallbackUrl;
+        }
+      }, 500);
+    });
+  </script>
 </body>
 
 </html>
