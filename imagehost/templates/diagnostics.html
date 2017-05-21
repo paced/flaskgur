@@ -36,23 +36,10 @@
 
         <b>You are using {{ dirSize }} of storage.</b>
         <small><p class="foot">Please watch for remaining space!</p></small>
-        <a href="" class="goBack">Back</a>
+        <a href="/">Back to index</a>
       </div>
     </div>
   </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-  <script>
-    $('.goBack').on('click', function(evt) {
-      var fallbackUrl = "/";
-      var prevPage = window.location.href;
-      window.history.go(-1);
-      setTimeout(function() {
-        if (window.location.href == prevPage) {
-          window.location.href = fallbackUrl;
-        }
-      }, 500);
-    });
-  </script>
 </body>
 
 </html>
