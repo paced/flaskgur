@@ -95,12 +95,14 @@ I realise this app has its purposes, but isn’t really robust enough to justify
 		-	Still, ensure password policy is safe: must be long enough to not brute force.
 		-	Make API keys enumerable. Logged in users should be able to add and remove API keys.
 		-	A feature for “where am I logged in” and “log out all but me” would be helpful.
--	Remove the ridiculous diagnostics view of remaining file space, instead replacing it with an email notifier that sends emails to a set address or notifies the user via the web interface if too much space is being used.
+-	Remove the ridiculous diagnostics view of remaining urls and file space, instead replacing it with an email notifier that sends emails to a set address or notifies the user via the web interface if too much space is being used.
 -	Work on optionally removing the oldest images after storage warnings are issued.
 
 Changelog
 ---------
 
+-	22nd May 2017
+	-	Removed useless and ridiculous diagnostics views of remaining files.
 -	21st May 2017
 	-	After much debate, I figured to increase the default URL digits for files in order to mitigate directory traversal.
 	-	But this is only for default. You can also make a screenshot sending an additional argument "insecure: 1" which will give a classic short URL.

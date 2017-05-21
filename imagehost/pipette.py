@@ -64,11 +64,6 @@ cssBundle = CSSBundle('allCSS', assets=[raleway, skeleton, customcss],
 compressor.register_bundle(cssBundle)
 
 
-def getMaxPossible():
-    """Get the total possible number of combinations."""
-    return sum([pow(61, s) for s in range(PATH_MINLENGTH, PATH_MAXLENGTH + 1)])
-
-
 def getNoTaken(ext):
     """Check the number of files with an extension in the database."""
     db = sqlite3.connect(DATABASE)
@@ -276,35 +271,20 @@ def delete(filename):
 @app.route('/diagnostics')
 def diagnostics():
     """Diagnostic view."""
-    totalFilesPerExt = getMaxPossible()
-    totalPossibleFiles = len(ALLOWED_EXTENSIONS) * totalFilesPerExt
-
     filesUsed = list()  # List of dicts with data to be passed to template.
-
     totalUsed = 0  # Cumulative sum of the total used files.
 
     for i in ALLOWED_EXTENSIONS:
         taken = getNoTaken(i)
-        percent = '{0:.1f}%'.format(100.0 * taken / totalFilesPerExt)
-
         totalUsed += taken
 
-        filesUsed.append({"extension": i, "used": '{:,}'.format(taken),
-                          "percent": percent,
-                          "left": '{:,}'.format(totalFilesPerExt - taken),
-                          "total": '{:,}'.format(totalFilesPerExt)})
+        filesUsed.append({"extension": i, "used": '{:,}'.format(taken)})
 
     # Now, sort the files used so the type with the highest usage is first.
     filesUsed = sorted(filesUsed, reverse=True, key=lambda k: int(k['used']))
 
     # Total calculations.
-    percent = '{0:.1f}%'.format(100.0 * totalUsed / totalPossibleFiles)
-
-    filesUsed.append({"extension": "TOTAL",
-                      "used": '{:,}'.format(totalUsed),
-                      "percent": percent,
-                      "left": '{:,}'.format(totalPossibleFiles - totalUsed),
-                      "total": '{:,}'.format(totalPossibleFiles)})
+    filesUsed.append({"extension": "TOTAL", "used": '{:,}'.format(totalUsed)})
 
     # We also pass the size of the pics directory to diagnostics.
     dirSize = getDirSize(UPLOAD_DIR)
