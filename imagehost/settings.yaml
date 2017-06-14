@@ -22,6 +22,10 @@ ALLOWED_EXTENSIONS:
   - "mp3"
   - "gif"
   - "bmp"
+  - "zip"
+  - "rar"
+  - "js"
+  - "py"
 
 # Secure
 PATH_MINLENGTH: 10

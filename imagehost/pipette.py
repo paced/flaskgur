@@ -278,6 +278,9 @@ def diagnostics():
         taken = getNoTaken(i)
         totalUsed += taken
 
+        if taken == 0:
+            continue
+
         filesUsed.append({"extension": i, "used": '{:,}'.format(taken)})
 
     # Now, sort the files used so the type with the highest usage is first.
