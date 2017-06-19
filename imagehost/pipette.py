@@ -268,7 +268,7 @@ def delete(filename):
     return "Success. No longer exists: " + request.url_root + filename, 202
 
 
-@app.route('/diagnostics')
+@app.route('/diagnostics/')
 def diagnostics():
     """Diagnostic view."""
     filesUsed = list()  # List of dicts with data to be passed to template.
@@ -294,6 +294,12 @@ def diagnostics():
 
     return render_template('diagnostics.html', payload=filesUsed, me=WHOAMI,
                            desc=DIAG_DESCRIPTION, dirSize=dirSize)
+
+
+@app.route("/admin/")
+def auth():
+    """Authenticate user and provide admin controls."""
+    return "Not yet implemented."
 
 
 @app.route('/<filename>')
