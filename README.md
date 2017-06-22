@@ -101,6 +101,9 @@ I realise this app has its purposes, but isn’t really robust enough to justify
 Changelog
 ---------
 
+-	22nd June 2017
+	-	Resetting the app now stashes or deletes the contents of the upload folder.
+	-	Fixed missing newlines in HTTP response for deleting.
 -	22nd May 2017
 	-	Removed useless and ridiculous diagnostics views of remaining files.
 -	21st May 2017

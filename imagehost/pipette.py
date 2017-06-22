@@ -154,6 +154,18 @@ def init():
     db.close()
 
 
+def deleteAll():
+    """Move all files in pics to the stash folder."""
+    path = os.path.abspath(UPLOAD_DIR) + "/"
+
+    for fn in os.listdir(UPLOAD_DIR):
+        if fn != ".gitkeep" and os.path.isfile(path + fn):
+            if STASH:
+                os.rename(path + fn, path + "stash/" + fn)
+            else:
+                os.remove(path + fn)
+
+
 @app.errorhandler(502)
 def fiveOhTwo(e):
     """View for 502 page."""
@@ -211,9 +223,6 @@ def uploadPic():
                 # Check that we're not getting too full.
                 if counter >= TOO_MANY_COLLISIONS:
                     if not gettingFullWarning:
-                        print("We are adding a file to a densely " +
-                              "populated database. We will start to " +
-                              "accept collisions once we're full.")
                         gettingFullWarning = True
                     elif databaseFull():
                         return 500
@@ -248,15 +257,16 @@ def delete(filename):
 
     # First check API key.
     if not okApiKey(apikey):
-        return "Forbidden. Bad API key.", 403
+        return "Forbidden: bad API key.\n", 403
 
     # Don't delete from the database. Just let it 404. Imagine sending
     # something and the recipient, down the line, stumbling upon it only for
-    # it to be something completely different.
+    # it to be something completely different. The chance is very low, but
+    # we can account for it because of the single-user nature.
 
     # Test if the file exists.
     if not os.path.exists(os.path.join(UPLOAD_DIR, filename)):
-        return "Nothing to do. File not found.", 404
+        return "Nothing to do: file not found.\n", 404
 
     # Now, depending on our settings file, we either delete the file or stash.
     if STASH:
@@ -265,7 +275,7 @@ def delete(filename):
     else:
         os.remove(os.path.join(UPLOAD_DIR, filename))
 
-    return "Success. No longer exists: " + request.url_root + filename, 202
+    return "Success. Deleted: " + request.url_root + filename + "\n", 202
 
 
 @app.route('/diagnostics/')
@@ -347,11 +357,12 @@ if __name__ == '__main__':
             print("Checking that your key is unique...")
             isUnique(argv[2], True)
         elif argv[1] == "restart":
-            if raw_input("Are you ABSOLUTELY sure? All files will be " +
-                         "destroyed! Type 'yes' if you understand. ") == "yes":
+            if str(input("Are you ABSOLUTELY sure? All files will be " +
+                         "destroyed! Type 'yes' if you understand. ")) == "yes":
                 init()
-                print("Restarted! Old files have not been purged.")
+                deleteAll()
+                print("Restarted! All files have been deleted!")
             else:
                 print("Nothing was changed.")
         else:
-            print("Your command was not recognised: " + argv[1:].join(" "))
+            print("Your command was not recognised: " + str(argv[1]))
