@@ -5,7 +5,7 @@
 pipette
 =======
 
-Pipette is a self-hosted image and file host that is light, simple, and customisable. See an example of the web frontend [here](https://i.paced.me).
+Pipette is a self-hosted image and file host that is light, simple, and customisable.
 
 Features
 --------
@@ -19,10 +19,9 @@ Features
 Requirements
 ------------
 
--	Python
+-	Python (2 or 3)
 -	python-pip
-
-We recommend using virtualenv to not clutter your machine's Python installation, but it is not required.
+-	virtualenv
 
 Installation
 ------------
@@ -68,7 +67,7 @@ Use at your own risk. If you don't know how this works, I suggest either deletin
 Usage
 -----
 
-Send a file by POST request with a file: "file" and field "apikey". The HTTP response is a URL, or a failure code. ShareX and curl are great tools to use this with.
+Send a file by POST request with a file: "file" and field "apikey". The HTTP response is a URL, or a failure message. ShareX and curl are great tools to use this with.
 
 Delete a file by POST request to /delete/<file>. Include field "apikey" and the file will be immediately deleted without confirmation.
 
@@ -80,23 +79,6 @@ Credits and License
 -	Favicon/logo design by Hannah Yen.
 
 This project is licensed under GPLv2.0.
-
-Future
-------
-
-I realise this app has its purposes, but isn’t really robust enough to justify using over certain other implementations. There are a few implementation options I would like:
-
--	Create a script that can set install options via CLI and upload that as a pip module.
--	Allow a user to view their uploaded files (securely) using the web interface.
-	-	Also should be able to delete. Use the same route as the delete. POST requests to the delete route will check for an API key. The web app will send some value that the route will understand as sentinel, meaning the app will use a different function to authenticate: one that requires a valid login.
-	-	This would require talking about authentication. Implementing this in a way that allows the app to remain secure is going to be tricky:
-		-	Users probably won’t want to remember a really long API key for a password since most don’t use a password manager.
-		-	Also, they should be able to change the password if required.
-		-	Still, ensure password policy is safe: must be long enough to not brute force.
-		-	Make API keys enumerable. Logged in users should be able to add and remove API keys.
-		-	A feature for “where am I logged in” and “log out all but me” would be helpful.
--	Remove the ridiculous diagnostics view of remaining urls and file space, instead replacing it with an email notifier that sends emails to a set address or notifies the user via the web interface if too much space is being used.
--	Work on optionally removing the oldest images after storage warnings are issued.
 
 Changelog
 ---------
