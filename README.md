@@ -7,6 +7,8 @@ pipette
 
 Pipette is a self-hosted image and file host that is light, simple, and customisable.
 
+**Note that this project is now defunct and is archived for legacy purposes. Reason: I no longer have a need for an image or file host, and there are better alternatives online. This was my first non-trivial software and was primarily built for education purposes.**
+
 Features
 --------
 
